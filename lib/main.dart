@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/database/sql_helper.dart';
 
 void main() {
   runApp(const MyApp());
