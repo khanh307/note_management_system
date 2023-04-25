@@ -30,9 +30,23 @@ class _SignUpHomeState extends State<SignUpHome> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _obscureText = true; //password
+  bool _obscureTextConfirm = true; //confirm password
 
   List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
+
+  void _toggleObscureText() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+   void _toggleObscureTextConfirm() {
+    setState(() {
+      _obscureTextConfirm = !_obscureTextConfirm;
+    });
+  }
 
   Future<void> _reFreshUsers() async {
     final data = await SQLHelper.getUsers();
@@ -155,7 +169,7 @@ class _SignUpHomeState extends State<SignUpHome> {
                           ),
                           TextFormField(
                             controller: _passwordController,
-                            obscureText: true,
+                            obscureText: _obscureText,
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                   borderRadius:
@@ -167,6 +181,11 @@ class _SignUpHomeState extends State<SignUpHome> {
                                 borderSide: BorderSide(color: Colors.blue),
                               ),
                               prefixIcon: Icon(Icons.lock),
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleObscureText,
+                                child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility,
+                                color: _obscureText ? Colors.grey : Colors.blue,),
+                              ),
                               hintText: 'Enter your password',
                               fillColor: Colors.grey[200],
                               filled: true,
@@ -182,7 +201,7 @@ class _SignUpHomeState extends State<SignUpHome> {
                           ),
                           TextFormField(
                             controller: _confirmPasswordController,
-                            obscureText: true,
+                            obscureText: _obscureTextConfirm,
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                   borderRadius:
@@ -195,6 +214,11 @@ class _SignUpHomeState extends State<SignUpHome> {
                               ),
                               prefixIcon: Icon(Icons.lock),
                               hintText: 'Confirm password',
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleObscureTextConfirm,
+                                child: Icon(_obscureTextConfirm ? Icons.visibility_off : Icons.visibility,
+                                color: _obscureTextConfirm ? Colors.grey : Colors.blue,),
+                              ),
                               fillColor: Colors.grey[200],
                               filled: true,
                             ),
@@ -227,8 +251,9 @@ class _SignUpHomeState extends State<SignUpHome> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Create account failed'),
+                            content: Text('Create account failed', textAlign: TextAlign.center, style: TextStyle(color: Colors.red),),
                             duration: Duration(seconds: 3),
+                            backgroundColor: Color.fromARGB(255, 113, 176, 224),
                           ),
                         );
                       }

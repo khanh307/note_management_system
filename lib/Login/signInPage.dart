@@ -29,6 +29,14 @@ class _SignInHomeState extends State<SignInHome> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _obscureText = true;
+
+  void _toggleObscureText() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -64,8 +72,9 @@ class _SignInHomeState extends State<SignInHome> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Login Failed'),
+            content: Text('Login Failed', textAlign: TextAlign.center, style: TextStyle(color: Colors.red),),
             duration: Duration(seconds: 3),
+            backgroundColor: Color.fromARGB(255, 209, 188, 124),
           ),
         );
       }
@@ -156,7 +165,7 @@ class _SignInHomeState extends State<SignInHome> {
                           ),
                           TextFormField(
                             controller: _passwordController,
-                            obscureText: true,
+                            obscureText: _obscureText,
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
                                   borderRadius:
@@ -171,6 +180,11 @@ class _SignInHomeState extends State<SignInHome> {
                               hintText: 'Password',
                               fillColor: Colors.grey[200],
                               filled: true,
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleObscureText,
+                                child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility,
+                                color: _obscureText ? Colors.grey : Colors.blue,),
+                              ),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
