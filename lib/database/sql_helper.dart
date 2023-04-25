@@ -13,11 +13,13 @@ class SQLHelper {
   static const _userTable = "user";
   static const _columnEmail = "email";
   static const _columnPassword = "password";
+  static const _columnFirstName = "firstname";
+  static const _columnLastName = "lastname";
 
 //  category
   static const _categoryTable = "category";
 
-//  prority
+//  priority
   static const _priorityTable = "priority";
 
 //  status
@@ -26,7 +28,7 @@ class SQLHelper {
 //  note
   static const _noteTable = "note";
   static const _columnPlanDate = "planDate";
-  static const _columnCaterotyId = "categoryId";
+  static const _columnCategoryId = "categoryId";
   static const _columnPriorityId = "priorityId";
   static const _columnStatusId = "statusId";
 
@@ -34,6 +36,8 @@ class SQLHelper {
     await database.execute('''CREATE TABLE $_userTable(
     $_columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     $_columnEmail TEXT,
+    $_columnFirstName TEXT,
+    $_columnLastName TEXT,
     $_columnPassword TEXT)''');
   }
 
@@ -66,7 +70,7 @@ class SQLHelper {
     $_columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     $_columnName TEXT,
     $_columnUserId INTEGER,
-    $_columnCaterotyId INTEGER,
+    $_columnCategoryId INTEGER,
     $_columnPriorityId INTEGER,
     $_columnStatusId INTEGER,
     $_columnPlanDate TIMESTAMP,
@@ -78,6 +82,7 @@ class SQLHelper {
       _dbName,
       version: 1,
       onCreate: (Database database, int version) async {
+        await createUserTable(database);
         await createCategoryTable(database);
         await createPriorityTable(database);
         await createStatusTable(database);
