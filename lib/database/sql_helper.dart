@@ -1,5 +1,6 @@
-import 'package:sqflite/sqflite.dart';
 
+import 'package:note_manangement_system/Model/userModel.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SQLHelper {
   static const _dbName = "note.db";
@@ -78,6 +79,7 @@ class SQLHelper {
       _dbName,
       version: 1,
       onCreate: (Database database, int version) async {
+        await createUserTable(database);
         await createCategoryTable(database);
         await createPriorityTable(database);
         await createStatusTable(database);
@@ -86,4 +88,22 @@ class SQLHelper {
     );
   }
 
+  // add a user
+  static Future<int> addUser(UserModel user) async {
+    final db = await SQLHelper.db();
+
+    final id = await db.insert(_userTable, user.toMap(),
+       conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+   //read all user
+  static Future<List<Map<String, dynamic>>> getUsers() async {
+    final db = await SQLHelper.db();
+
+    return db.query(_userTable, orderBy: "id");
+  }
+
+ 
 }
+
