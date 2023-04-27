@@ -19,7 +19,7 @@ class SQLHelper {
 //  category
   static const _categoryTable = "category";
 
-//  prority
+//  priority
   static const _priorityTable = "priority";
 
 //  status
@@ -28,7 +28,7 @@ class SQLHelper {
 //  note
   static const _noteTable = "note";
   static const _columnPlanDate = "planDate";
-  static const _columnCaterotyId = "categoryId";
+  static const _columnCategoryId = "categoryId";
   static const _columnPriorityId = "priorityId";
   static const _columnStatusId = "statusId";
 
@@ -70,7 +70,7 @@ class SQLHelper {
     $_columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     $_columnName TEXT,
     $_columnUserId INTEGER,
-    $_columnCaterotyId INTEGER,
+    $_columnCategoryId INTEGER,
     $_columnPriorityId INTEGER,
     $_columnStatusId INTEGER,
     $_columnPlanDate TIMESTAMP,
