@@ -1,4 +1,4 @@
-import 'package:note_manangement_system/Model/userModel.dart';
+import 'package:note_manangement_system/Model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLHelper {
@@ -100,21 +100,13 @@ class SQLHelper {
     return id;
   }
 
-  //read all user
-  static Future<List<Map<String, dynamic>>> getUsers() async {
-    final db = await SQLHelper.db();
-
-    return db.query(_userTable, orderBy: "id");
-  }
-
   //function check login
-  static Future<bool> checkLogin(String email, String password) async {
+  static Future<List<Map<String, dynamic>>> getUser(String email, String password) async {
     final db = await SQLHelper.db();
-    final List<Map<String, dynamic>> users = await db.query(_userTable,
+    return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
         whereArgs: [email, password]);
 
-    return users.isNotEmpty;
   }
 
   // Email duplicate check function in database
@@ -122,7 +114,6 @@ class SQLHelper {
     final db = await SQLHelper.db();
     final List<Map<String, dynamic>> users = await db
         .query(_userTable, where: '$_columnEmail = ?', whereArgs: [email]);
-
     if (users.isNotEmpty) {
       return true;
     } else {
@@ -132,7 +123,7 @@ class SQLHelper {
 
   //add account
   static Future<bool> addAccount(String email, String password) async {
-    final db = await SQLHelper.db();
+
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
       return false;
