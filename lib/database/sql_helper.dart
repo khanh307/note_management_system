@@ -1,4 +1,3 @@
-
 import 'package:note_manangement_system/Model/userModel.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -14,6 +13,8 @@ class SQLHelper {
   static const _userTable = "user";
   static const _columnEmail = "email";
   static const _columnPassword = "password";
+  static const _columnFirstName = "firstname";
+  static const _columnLastName = "lastname";
 
 //  category
   static const _categoryTable = "category";
@@ -35,6 +36,8 @@ class SQLHelper {
     await database.execute('''CREATE TABLE $_userTable(
     $_columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     $_columnEmail TEXT,
+    $_columnFirstName TEXT,
+    $_columnLastName TEXT,
     $_columnPassword TEXT)''');
   }
 
@@ -93,17 +96,53 @@ class SQLHelper {
     final db = await SQLHelper.db();
 
     final id = await db.insert(_userTable, user.toMap(),
-       conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.replace);
     return id;
   }
 
-   //read all user
+  //read all user
   static Future<List<Map<String, dynamic>>> getUsers() async {
     final db = await SQLHelper.db();
 
     return db.query(_userTable, orderBy: "id");
   }
 
- 
-}
+  //function check login
+  static Future<bool> checkLogin(String email, String password) async {
+    final db = await SQLHelper.db();
+    final List<Map<String, dynamic>> users = await db.query(_userTable,
+        where: '$_columnEmail = ? AND $_columnPassword = ?',
+        whereArgs: [email, password]);
 
+    return users.isNotEmpty;
+  }
+
+  // Email duplicate check function in database
+  static Future<bool> checkDuplicateEmail(String email) async {
+    final db = await SQLHelper.db();
+    final List<Map<String, dynamic>> users = await db
+        .query(_userTable, where: '$_columnEmail = ?', whereArgs: [email]);
+
+    if (users.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //add account
+  static Future<bool> addAccount(String email, String password) async {
+    final db = await SQLHelper.db();
+    final isDuplicate = await checkDuplicateEmail(email);
+    if (isDuplicate) {
+      return false;
+    } else {
+      UserModel user = UserModel(
+        email: email,
+        password: password,
+      );
+      SQLHelper.addUser(user);
+      return true;
+    }
+  }
+}

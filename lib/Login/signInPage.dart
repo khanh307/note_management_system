@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sort_child_properties_last, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/Database/sql_helper.dart';
-import 'package:note_manangement_system/Login/home.dart';
+import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/Register/signUpPage.dart';
+import 'package:note_manangement_system/homePage/home.dart';
+import 'package:note_manangement_system/utils/function_utils.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -31,7 +31,7 @@ class _SignInHomeState extends State<SignInHome> {
 
   bool _obscureText = true;
 
-  void _toggleObscureText() {
+  void _togglePassword() {
     setState(() {
       _obscureText = !_obscureText;
     });
@@ -39,7 +39,6 @@ class _SignInHomeState extends State<SignInHome> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -47,37 +46,28 @@ class _SignInHomeState extends State<SignInHome> {
 
   // function Login
   void _login() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
+    String emailForm = _emailController.text;
+    String passwordForm = hashPassword(_passwordController.text);
 
-    // Check the input data
-    if (_formKey.currentState!.validate()) {
-      // Get a list of users from the database
-      List<Map<String, dynamic>> users = await SQLHelper.getUsers();
-      bool isLoggedIn = false;
+    bool isLogin = await SQLHelper.checkLogin(emailForm, passwordForm);
 
-      for (var user in users) {
-        //Check the email and password entered with the data in the database
-        if (user['email'] == email && user['password'] == password) {
-          isLoggedIn = true;
-          break;
-        }
-      }
-      if (isLoggedIn) {
-        // If the login information is correct, go to the main page of the application
-        Navigator.pushReplacement(
+    if (isLogin) {
+      Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login Failed', textAlign: TextAlign.center, style: TextStyle(color: Colors.red),),
-            duration: Duration(seconds: 3),
-            backgroundColor: Color.fromARGB(255, 209, 188, 124),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+          (route) => false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Login Failed',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
           ),
-        );
-      }
+          duration: Duration(seconds: 3),
+          backgroundColor:  Color.fromARGB(255, 113, 176, 224),
+        ),
+      );
     }
   }
 
@@ -181,9 +171,14 @@ class _SignInHomeState extends State<SignInHome> {
                               fillColor: Colors.grey[200],
                               filled: true,
                               suffixIcon: GestureDetector(
-                                onTap: _toggleObscureText,
-                                child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility,
-                                color: _obscureText ? Colors.grey : Colors.blue,),
+                                onTap: _togglePassword,
+                                child: Icon(
+                                  _obscureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color:
+                                      _obscureText ? Colors.grey : Colors.blue,
+                                ),
                               ),
                             ),
                             validator: (value) {
@@ -247,3 +242,4 @@ class _SignInHomeState extends State<SignInHome> {
     );
   }
 }
+

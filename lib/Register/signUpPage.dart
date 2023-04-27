@@ -1,10 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/Database/sql_helper.dart';
-import 'package:note_manangement_system/Login/signInPage.dart';
-import 'package:note_manangement_system/Model/userModel.dart';
-
+import 'package:note_manangement_system/database/sql_helper.dart';
+import 'package:note_manangement_system/login/signInPage.dart';
+import 'package:note_manangement_system/utils/function_utils.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -36,13 +35,13 @@ class _SignUpHomeState extends State<SignUpHome> {
   List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
 
-  void _toggleObscureText() {
+  void _togglePassword() {
     setState(() {
       _obscureText = !_obscureText;
     });
   }
 
-   void _toggleObscureTextConfirm() {
+  void _toggleConfirm() {
     setState(() {
       _obscureTextConfirm = !_obscureTextConfirm;
     });
@@ -57,18 +56,8 @@ class _SignUpHomeState extends State<SignUpHome> {
     });
   }
 
-  Future<void> _addUser() async {
-    await SQLHelper.addUser(UserModel(
-      email: _emailController.text,
-      password: _confirmPasswordController.text,
-    ));
-
-    _reFreshUsers();
-  }
-
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -77,7 +66,6 @@ class _SignUpHomeState extends State<SignUpHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _reFreshUsers();
   }
@@ -182,9 +170,14 @@ class _SignUpHomeState extends State<SignUpHome> {
                               ),
                               prefixIcon: Icon(Icons.lock),
                               suffixIcon: GestureDetector(
-                                onTap: _toggleObscureText,
-                                child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility,
-                                color: _obscureText ? Colors.grey : Colors.blue,),
+                                onTap: _togglePassword,
+                                child: Icon(
+                                  _obscureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color:
+                                      _obscureText ? Colors.grey : Colors.blue,
+                                ),
                               ),
                               hintText: 'Enter your password',
                               fillColor: Colors.grey[200],
@@ -215,9 +208,15 @@ class _SignUpHomeState extends State<SignUpHome> {
                               prefixIcon: Icon(Icons.lock),
                               hintText: 'Confirm password',
                               suffixIcon: GestureDetector(
-                                onTap: _toggleObscureTextConfirm,
-                                child: Icon(_obscureTextConfirm ? Icons.visibility_off : Icons.visibility,
-                                color: _obscureTextConfirm ? Colors.grey : Colors.blue,),
+                                onTap: _toggleConfirm,
+                                child: Icon(
+                                  _obscureTextConfirm
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                  color: _obscureTextConfirm
+                                      ? Colors.grey
+                                      : Colors.blue,
+                                ),
                               ),
                               fillColor: Colors.grey[200],
                               filled: true,
@@ -243,22 +242,44 @@ class _SignUpHomeState extends State<SignUpHome> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(builder: (_) => SignInPage()),
-                            (route) => false);
-                        await _addUser();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Create account failed', textAlign: TextAlign.center, style: TextStyle(color: Colors.red),),
-                            duration: Duration(seconds: 3),
-                            backgroundColor: Color.fromARGB(255, 113, 176, 224),
-                          ),
-                        );
+                        if (await SQLHelper.addAccount(
+                            _emailController.text.trim(),
+                            hashPassword(_confirmPasswordController.text.trim()))) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Create Account Success',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+                              ),
+                              duration: Duration(seconds: 3),
+                              backgroundColor:
+                                  Color.fromARGB(255, 113, 176, 224),
+                            ),
+                          );
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignInPage()),
+                              (route) => false);
+                        } else {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Email already exists',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+                              ),
+                              duration: Duration(seconds: 3),
+                              backgroundColor:
+                                  Color.fromARGB(255, 113, 176, 224),
+                            ),
+                          );
+                        }
                       }
 
-                      _emailController.text = '';
                       _passwordController.text = '';
                       _confirmPasswordController.text = '';
                     },
@@ -307,10 +328,4 @@ class _SignUpHomeState extends State<SignUpHome> {
   }
 }
 
-//Email format audit function
-bool isValidEmail(String value) {
-  String pattern =
-      r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$'; // Format email
-  RegExp regex = new RegExp(pattern);
-  return regex.hasMatch(value);
-}
+
