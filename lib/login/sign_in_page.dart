@@ -27,8 +27,8 @@ class SignInHome extends StatefulWidget {
 
 class _SignInHomeState extends State<SignInHome> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'huytam@gmail.com');
-  final _passwordController = TextEditingController(text: 'huytam123');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   bool _obscureText = true;
 
