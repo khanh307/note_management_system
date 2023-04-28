@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/dashboard/dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
   final UserModel user;
@@ -10,7 +11,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: _HomePage(user: user,),
+      home: _HomePage(
+        user: user,
+      ),
     );
   }
 }
@@ -26,7 +29,7 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   var _title = 'Dashboard Form';
-  // var _widget = const NoteScreen();
+  dynamic _widget = const DashBoard();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +37,7 @@ class _HomePageState extends State<_HomePage> {
         appBar: AppBar(
           title: Text(_title),
         ),
-        // body: _widget,
+        body: _widget,
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -57,6 +60,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Dashboard Form';
+                    _widget = const DashBoard();
                   });
                 },
               ),
