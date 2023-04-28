@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
+import '../model/journal_model.dart';
 
 class SQLHelper {
   static const _dbName = "note.db";
@@ -101,12 +103,12 @@ class SQLHelper {
   }
 
   //function check login
-  static Future<List<Map<String, dynamic>>> getUser(String email, String password) async {
+  static Future<List<Map<String, dynamic>>> getUser(
+      String email, String password) async {
     final db = await SQLHelper.db();
     return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
         whereArgs: [email, password]);
-
   }
 
   // Email duplicate check function in database
@@ -123,7 +125,6 @@ class SQLHelper {
 
   //add account
   static Future<bool> addAccount(String email, String password) async {
-
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
       return false;
@@ -134,6 +135,36 @@ class SQLHelper {
       );
       SQLHelper.addUser(user);
       return true;
+    }
+  }
+
+  static Future<int> createItem(JournalModel journal) async {
+    final db = await SQLHelper.db();
+    final id = await db.insert(_categoryTable, journal.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  static Future<List<Map<String, dynamic>>> getItems() async {
+    final db = await SQLHelper.db();
+    return db.query(_categoryTable, orderBy: "id");
+  }
+
+  static Future<int> updateItem(JournalModel journal) async {
+    final db = await SQLHelper.db();
+
+    final result = await db.update(_categoryTable, journal.toMap(),
+        where: "id = ?", whereArgs: [journal.id]);
+    return result;
+  }
+
+  static Future<void> deleteItem(int id) async {
+    final db = await SQLHelper.db();
+
+    try {
+      await db.delete(_categoryTable, where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint('Something went wrong when deleting an item: $err');
     }
   }
 }

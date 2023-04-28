@@ -27,8 +27,8 @@ class SignInHome extends StatefulWidget {
 
 class _SignInHomeState extends State<SignInHome> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'huytam@gmail.com');
+  final _passwordController = TextEditingController(text: 'huytam123');
 
   bool _obscureText = true;
 
@@ -50,12 +50,15 @@ class _SignInHomeState extends State<SignInHome> {
     String emailForm = _emailController.text;
     String passwordForm = hashPassword(_passwordController.text.trim());
 
-    List<Map<String, dynamic>> user = await SQLHelper.getUser(emailForm, passwordForm);
+    List<Map<String, dynamic>> user =
+        await SQLHelper.getUser(emailForm, passwordForm);
 
     if (user.isNotEmpty) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(user: UserModel.fromMap(user[0]))),
+          MaterialPageRoute(
+              builder: (context) =>
+                  HomeScreen(user: UserModel.fromMap(user[0]))),
           (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,10 +66,11 @@ class _SignInHomeState extends State<SignInHome> {
           content: Text(
             'Login Failed',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+            style: TextStyle(
+                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
           ),
           duration: Duration(seconds: 3),
-          backgroundColor:  Color.fromARGB(255, 113, 176, 224),
+          backgroundColor: Color.fromARGB(255, 113, 176, 224),
         ),
       );
     }
@@ -244,4 +248,3 @@ class _SignInHomeState extends State<SignInHome> {
     );
   }
 }
-
