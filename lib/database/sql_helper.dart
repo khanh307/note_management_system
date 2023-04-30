@@ -1,4 +1,4 @@
-import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SQLHelper {
@@ -19,7 +19,7 @@ class SQLHelper {
 //  category
   static const _categoryTable = "category";
 
-//  priority
+//  prority
   static const _priorityTable = "priority";
 
 //  status
@@ -28,7 +28,7 @@ class SQLHelper {
 //  note
   static const _noteTable = "note";
   static const _columnPlanDate = "planDate";
-  static const _columnCategoryId = "categoryId";
+  static const _columnCaterotyId = "categoryId";
   static const _columnPriorityId = "priorityId";
   static const _columnStatusId = "statusId";
 
@@ -100,13 +100,20 @@ class SQLHelper {
     return id;
   }
 
+  //read all user
+  static Future<List<Map<String, dynamic>>> getUsers() async {
+    final db = await SQLHelper.db();
+
+    return db.query(_userTable, orderBy: "id");
+  }
+
   //function check login
-  static Future<List<Map<String, dynamic>>> getUser(String email, String password) async {
+  static Future<List<Map<String, dynamic>>> checkLogin(
+      String email, String password) async {
     final db = await SQLHelper.db();
     return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
         whereArgs: [email, password]);
-
   }
 
   // Email duplicate check function in database
@@ -114,6 +121,7 @@ class SQLHelper {
     final db = await SQLHelper.db();
     final List<Map<String, dynamic>> users = await db
         .query(_userTable, where: '$_columnEmail = ?', whereArgs: [email]);
+
     if (users.isNotEmpty) {
       return true;
     } else {
@@ -122,8 +130,8 @@ class SQLHelper {
   }
 
   //add account
-  static Future<bool> addAccount(String email, String password) async {
-
+  static Future addAccount(String email, String password) async {
+    final db = await SQLHelper.db();
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
       return false;
@@ -135,5 +143,36 @@ class SQLHelper {
       SQLHelper.addUser(user);
       return true;
     }
+  }
+
+  // update a user profile in the database
+  static Future<int> updateUserProfile(UserModel user) async {
+    final db = await SQLHelper.db();
+    return await db.update(_userTable, user.toMap(),
+        where: '$_columnId = ?', whereArgs: [user.id]);
+  }
+
+  // load user by email
+  static Future<UserModel> getUserByEmail(String email) async {
+    final db = await SQLHelper.db();
+
+    final result = await db.query(
+      _userTable,
+      where: '$_columnEmail = ?',
+      whereArgs: [email],
+    );
+
+    if (result.isNotEmpty) {
+      return UserModel.fromMap(result.first);
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
+  //function change password
+ static Future<void> changePassword(String email, String password) async {
+    final db = await SQLHelper.db();
+    await db.update(_userTable, {_columnPassword: password},
+        where: '$_columnEmail = ?', whereArgs: [email]);
   }
 }

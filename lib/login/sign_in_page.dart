@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, sort_child_properties_last, use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/Model/user_model.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
-import 'package:note_manangement_system/Register/sign_up_page.dart';
 import 'package:note_manangement_system/homePage/home.dart';
+import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/register/sign_up_page.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 
 class SignInPage extends StatelessWidget {
@@ -48,25 +48,29 @@ class _SignInHomeState extends State<SignInHome> {
   // function Login
   void _login() async {
     String emailForm = _emailController.text;
-    String passwordForm = hashPassword(_passwordController.text.trim());
+    String passwordForm = hashPassword(_passwordController.text);
 
-    List<Map<String, dynamic>> user = await SQLHelper.getUser(emailForm, passwordForm);
+    List<Map<String, dynamic>> user =
+        await SQLHelper.checkLogin(emailForm, passwordForm);
 
     if (user.isNotEmpty) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(user: UserModel.fromMap(user[0]))),
+          MaterialPageRoute(
+              builder: (context) =>
+                  HomeScreen(user: UserModel.fromMap(user[0]))),
           (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
-            'Login Failed',
+            '* Địa chỉ email hoặc mật khẩu không đúng',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+            style: TextStyle(
+                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
           ),
           duration: Duration(seconds: 3),
-          backgroundColor:  Color.fromARGB(255, 113, 176, 224),
+          backgroundColor: Color.fromARGB(255, 113, 176, 224),
         ),
       );
     }
@@ -186,7 +190,6 @@ class _SignInHomeState extends State<SignInHome> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              return null;
                             },
                           ),
                         ],
