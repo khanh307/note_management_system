@@ -1,6 +1,7 @@
 // ignore_for_file: unused_field, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/changePassword/change_password.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/profile/edit_profile.dart';
 
@@ -122,6 +123,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Change password Form';
+                    _widget = const ChangePasswordScreen();
                   });
                 },
               ),

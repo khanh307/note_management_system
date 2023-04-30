@@ -62,9 +62,9 @@ class _SignInHomeState extends State<SignInHome> {
           (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
-            'Login Failed',
+            '* Địa chỉ email hoặc mật khẩu không đúng',
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
@@ -146,11 +146,11 @@ class _SignInHomeState extends State<SignInHome> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
+                                return '* Vui lòng nhập địa chỉ email';
                               }
 
                               if (!isValidEmail(value)) {
-                                return 'Incorrect email format';
+                                return '* Địa chỉ email hoặc mật khẩu không đúng';
                               }
                               return null;
                             },
@@ -188,7 +188,11 @@ class _SignInHomeState extends State<SignInHome> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return '* Vui lòng nhập mật khẩu';
+                              }
+
+                              if (!isPasswordValid(value)) {
+                                return "Địa chỉ email hoặc mật khẩu không đúng";
                               }
                             },
                           ),
@@ -201,7 +205,9 @@ class _SignInHomeState extends State<SignInHome> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      _login();
+                      if (_formKey.currentState!.validate()) {
+                        _login();
+                      }
                     },
                     child: Text(
                       'Login',

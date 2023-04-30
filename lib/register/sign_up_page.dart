@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/login/sign_in_page.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
@@ -130,12 +131,39 @@ class _SignUpHomeState extends State<SignUpHome> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
+                                return '* Vui lòng nhập địa chỉ email';
                               }
 
-                              if (!isValidEmail(value)) {
-                                return 'Incorrect email format';
+                              if (value.trim().length < 6) {
+                                return "* Vui lòng nhập tối thiểu 6 ký tự";
                               }
+
+                              if (value.trim().length > 256) {
+                                return "* Vui lòng nhập tối đa 256 ký tự";
+                              }
+
+                              if (value.contains('..') ||
+                                  value.startsWith('.') ||
+                                  value.endsWith('.') ||
+                                  value.endsWith('@') ||
+                                  value.contains('-@') ||
+                                  value.contains('@-') ||
+                                  value.contains('..') ||
+                                  RegExp(r'^[0-9]+$').hasMatch(value)) {
+                                return '* Địa chỉ email không đúng';
+                              }
+
+                              final List<String> parts = value.split('@');
+                              if (parts.length != 2 ||
+                                  parts[0].isEmpty ||
+                                  parts[1].isEmpty) {
+                                return '* Địa chỉ email không đúng';
+                              }
+
+                              if (RegExp(r'[^\w\s@.-]').hasMatch(value)) {
+                                return '* Địa chỉ email không đúng';
+                              }
+
                               return null;
                             },
                           ),
@@ -144,6 +172,9 @@ class _SignUpHomeState extends State<SignUpHome> {
                           ),
                           TextFormField(
                             controller: _passwordController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                            ],
                             obscureText: _obscureText,
                             decoration: InputDecoration(
                               enabledBorder: OutlineInputBorder(
@@ -172,7 +203,22 @@ class _SignUpHomeState extends State<SignUpHome> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return '* Vui lòng nhập mật khẩu';
+                              }
+
+                              if (value.trim().length < 6 ||
+                                  value.trim().length > 32) {
+                                return '* Mật khẩu phải có độ dài từ 6 đến 32 ký tự';
+                              }
+
+                              RegExp upperCase = RegExp(r'[A-Z]');
+                              if (!upperCase.hasMatch(value)) {
+                                return '* Vui lòng nhập ít nhât 1 chữ in hoa';
+                              }
+
+                              RegExp digit = RegExp(r'[0-9]');
+                              if (!digit.hasMatch(value)) {
+                                return '* Vui lòng nhập ít nhât 1 số';
                               }
                             },
                           ),
@@ -210,11 +256,11 @@ class _SignUpHomeState extends State<SignUpHome> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return '* Vui lòng nhập lại mật khẩu';
                               }
 
                               if (value != _passwordController.text) {
-                                return 'Password mismatch';
+                                return '*Mật khẩu chưa khớp';
                               }
                               return null;
                             },
@@ -234,21 +280,6 @@ class _SignUpHomeState extends State<SignUpHome> {
                             hashPassword(
                                 _confirmPasswordController.text.trim()))) {
                           if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Create Account Success',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18),
-                              ),
-                              duration: Duration(seconds: 3),
-                              backgroundColor:
-                                  Color.fromARGB(255, 113, 176, 224),
-                            ),
-                          );
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -259,7 +290,7 @@ class _SignUpHomeState extends State<SignUpHome> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                'Email already exists',
+                                '* Địa chỉ email này đã tồn tại',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Colors.red,

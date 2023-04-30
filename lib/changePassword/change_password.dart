@@ -1,37 +1,41 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: sort_child_properties_last, no_logic_in_create_state, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/database/sql_helper.dart';
-import 'package:note_manangement_system/utils/function_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:note_manangement_system/database/sql_helper.dart';
+import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/utils/function_utils.dart';
 
-class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+class ChangePasswordScreen extends StatelessWidget {
+  const ChangePasswordScreen({super.key});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }
 
-class _EditProfileState extends State<EditProfile> {
-  final _formKeyEdit = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _firstnameController = TextEditingController();
-  final _lastnameController = TextEditingController();
+class ChangePassword extends StatefulWidget {
+  final UserModel user;
+  const ChangePassword({required this.user});
 
-  List<Map<String, dynamic>> _users = [];
+  @override
+  State<ChangePassword> createState() => _ChangePasswordState();
+}
 
-  bool _isLoading = true;
+class _ChangePasswordState extends State<ChangePassword> {
+  final _formChange = GlobalKey<FormState>();
+  final _currentPassword = TextEditingController();
+  final _newPassword = TextEditingController();
+  final _confirmPassword = TextEditingController();
 
-  
-  Future<void> _reFreshUsers() async {
-    final data = await SQLHelper.getUsers();
-
-    setState(() {
-      _users = data;
-      _isLoading = false;
-    });
+  @override
+  void dispose() {
+    super.dispose();
+    _currentPassword.dispose();
+    _newPassword.dispose();
+    _confirmPassword.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +52,11 @@ class _EditProfileState extends State<EditProfile> {
               margin: const EdgeInsets.only(top: 20),
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Form(
-                  key: _formKeyEdit,
+                  key: _formChange,
                   child: Column(
                     children: [
                       TextFormField(
-                        controller: _firstnameController,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[a-zA-Z\s]')),
-                        ],
+                        controller: _currentPassword,
                         decoration: const InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
@@ -66,23 +66,57 @@ class _EditProfileState extends State<EditProfile> {
                             borderRadius: BorderRadius.all(Radius.circular(40)),
                             borderSide: BorderSide(color: Colors.blue),
                           ),
-                          prefixIcon: Icon(Icons.person),
-                          hintText: 'Enter your fristname',
+                          prefixIcon: Icon(Icons.lock),
+                          hintText: 'Enter your current password',
                           fillColor: Colors.white10,
                           filled: true,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "* Vui lòng nhập họ và tên lót";
+                            return '* Vui lòng nhập lại mật khẩu';
+                          }
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r"\s")),
+                        ],
+                        controller: _newPassword,
+                        decoration: const InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
+                              borderSide: BorderSide(color: Colors.grey)),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
+                          prefixIcon: Icon(Icons.lock),
+                          hintText: 'Enter your new password',
+                          fillColor: Colors.white10,
+                          filled: true,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '* Vui long nhập mật khẩu';
                           }
 
-                          if (value.trim().length < 2 ||
+                          if (value.trim().length < 6 ||
                               value.trim().length > 32) {
-                            return "* Họ và tên lót phải có độ dài từ 2 đến 32 ký tự";
+                            return '* Mật khẩu phải có độ dài từ 6 đến 32 ký tự';
                           }
 
-                          if (value.endsWith(' ')) {
-                            return "* Vui lòng không kết thúc bằng dấu cách";
+                          RegExp upperCase = RegExp(r'[A-Z]');
+                          if (!upperCase.hasMatch(value)) {
+                            return '* Vui lòng nhập ít nhât 1 chữ in hoa';
+                          }
+
+                          RegExp digit = RegExp(r'[0-9]');
+                          if (!digit.hasMatch(value)) {
+                            return '* Vui lòng nhập ít nhât 1 số';
                           }
                         },
                       ),
@@ -90,11 +124,10 @@ class _EditProfileState extends State<EditProfile> {
                         height: 20,
                       ),
                       TextFormField(
-                        controller: _lastnameController,
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[a-zA-Z\s]')),
+                          FilteringTextInputFormatter.deny(RegExp(r"\s")),
                         ],
+                        controller: _confirmPassword,
                         decoration: const InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
@@ -104,53 +137,20 @@ class _EditProfileState extends State<EditProfile> {
                             borderRadius: BorderRadius.all(Radius.circular(40)),
                             borderSide: BorderSide(color: Colors.blue),
                           ),
-                          prefixIcon: Icon(Icons.person),
-                          hintText: 'Enter your lastname',
+                          prefixIcon: Icon(Icons.lock),
+                          hintText: 'Confirm password',
                           fillColor: Colors.white10,
                           filled: true,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "* Vui lòng nhập tên";
+                            return '* Vui lòng nhập lại mật khẩu';
                           }
 
-                          if (value.length < 2 ||
-                              value.length > 32) {
-                            return "* Tên phải có độ dài từ 2 đến 32 ký tự";
+                          if (value != _newPassword.text) {
+                            return '*Mật khẩu chưa khớp';
                           }
-
-                          if (value.endsWith(' ')) {
-                            return "* Vui lòng không kết thúc bằng dấu cách";
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40)),
-                              borderSide: BorderSide(color: Colors.grey)),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(40)),
-                            borderSide: BorderSide(color: Colors.blue),
-                          ),
-                          prefixIcon: Icon(Icons.email),
-                          hintText: 'Enter your email',
-                          fillColor: Colors.white10,
-                          filled: true,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập địa chỉ email';
-                          }
-
-                          if (!isValidEmail(value)) {
-                            return '* Địa chỉ email hoặc mật khẩu không đúng';
-                          }
+                          return null;
                         },
                       )
                     ],
@@ -162,10 +162,21 @@ class _EditProfileState extends State<EditProfile> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  if(_formKeyEdit.currentState!.validate()) {}
+                  if (_formChange.currentState!.validate()) {
+                    if (widget.user.password! ==
+                        hashPassword(_currentPassword.text.trim())) {
+                      await SQLHelper.changePassword(
+                          widget.user.email!, _confirmPassword.text.trim());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Success')));
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(const SnackBar(content: Text('Failed')));
+                  }
                 },
                 child: const Text(
-                  'Save',
+                  'Change password',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -179,5 +190,6 @@ class _EditProfileState extends State<EditProfile> {
         ),
       ),
     );
+    ;
   }
 }

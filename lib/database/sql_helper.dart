@@ -1,4 +1,3 @@
-
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -109,7 +108,8 @@ class SQLHelper {
   }
 
   //function check login
-  static Future<List<Map<String, dynamic>>> checkLogin(String email, String password) async {
+  static Future<List<Map<String, dynamic>>> checkLogin(
+      String email, String password) async {
     final db = await SQLHelper.db();
     return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
@@ -130,7 +130,7 @@ class SQLHelper {
   }
 
   //add account
-  static Future<bool> addAccount(String email, String password) async {
+  static Future addAccount(String email, String password) async {
     final db = await SQLHelper.db();
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
@@ -143,5 +143,35 @@ class SQLHelper {
       SQLHelper.addUser(user);
       return true;
     }
+  }
+
+  // update a user profile in the database
+  static Future<int> updateUserProfile(UserModel user) async {
+    final db = await SQLHelper.db();
+    return await db.update(_userTable, user.toMap(),
+        where: '$_columnId = ?', whereArgs: [user.id]);
+  }
+
+  static Future<UserModel> getUserByEmail(String email) async {
+    final db = await SQLHelper.db();
+
+    final result = await db.query(
+      _userTable,
+      where: '$_columnEmail = ?',
+      whereArgs: [email],
+    );
+
+    if (result.isNotEmpty) {
+      return UserModel.fromMap(result.first);
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
+  //function change password
+  static Future<void> changePassword(String email, String password) async {
+    final db = await SQLHelper.db();
+    await db.update(_userTable, {_columnPassword: password},
+        where: '$_columnEmail = ?', whereArgs: [email]);
   }
 }
