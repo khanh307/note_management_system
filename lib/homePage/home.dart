@@ -123,7 +123,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Change password Form';
-                    _widget = const ChangePasswordScreen();
+                    _widget = ChangePassword(user: user!);
                   });
                 },
               ),

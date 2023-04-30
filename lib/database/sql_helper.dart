@@ -152,6 +152,7 @@ class SQLHelper {
         where: '$_columnId = ?', whereArgs: [user.id]);
   }
 
+  // load user by email
   static Future<UserModel> getUserByEmail(String email) async {
     final db = await SQLHelper.db();
 
@@ -169,7 +170,7 @@ class SQLHelper {
   }
 
   //function change password
-  static Future<void> changePassword(String email, String password) async {
+ static Future<void> changePassword(String email, String password) async {
     final db = await SQLHelper.db();
     await db.update(_userTable, {_columnPassword: password},
         where: '$_columnEmail = ?', whereArgs: [email]);
