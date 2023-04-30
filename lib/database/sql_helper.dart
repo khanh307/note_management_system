@@ -28,7 +28,7 @@ class SQLHelper {
 //  note
   static const _noteTable = "note";
   static const _columnPlanDate = "planDate";
-  static const _columnCaterotyId = "categoryId";
+  static const _columnCategoryId = "categoryId";
   static const _columnPriorityId = "priorityId";
   static const _columnStatusId = "statusId";
 
@@ -131,7 +131,6 @@ class SQLHelper {
 
   //add account
   static Future addAccount(String email, String password) async {
-    final db = await SQLHelper.db();
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
       return false;

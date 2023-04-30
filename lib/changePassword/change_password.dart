@@ -5,22 +5,17 @@ import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+
 class ChangePassword extends StatefulWidget {
-  
   final UserModel user;
 
-  const ChangePassword({required this.user, Key? key}) : super(key: key);
-
+  const ChangePassword({required this.user});
 
   @override
-  State<ChangePassword> createState() => _ChangePasswordState(user: user);
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-
-  UserModel user;
-  _ChangePasswordState({required this.user});
-
   final _formChange = GlobalKey<FormState>();
   final _currentPassword = TextEditingController();
   final _newPassword = TextEditingController();
@@ -160,10 +155,10 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: ElevatedButton(
                 onPressed: () async {
                   if (_formChange.currentState!.validate()) {
-                    if (user.password ==
+                    if (widget.user.password ==
                         hashPassword(_currentPassword.text.trim())) {
                       await SQLHelper.changePassword(
-                        user.email!, _confirmPassword.text.trim());
+                          widget.user.email!, _confirmPassword.text.trim());
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Success')));
                     }

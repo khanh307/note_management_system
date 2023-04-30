@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, sort_child_properties_last
-
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/database/sql_helper.dart';
+import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 import 'package:flutter/services.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  final UserModel user;
+
+  const EditProfile({super.key, required this.user});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -18,20 +19,27 @@ class _EditProfileState extends State<EditProfile> {
   final _firstnameController = TextEditingController();
   final _lastnameController = TextEditingController();
 
-  List<Map<String, dynamic>> _users = [];
-
   bool _isLoading = true;
 
-  
   Future<void> _reFreshUsers() async {
-    final data = await SQLHelper.getUsers();
-
     setState(() {
-      _users = data;
       _isLoading = false;
     });
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.user.firstname != null && widget.user.firstname!.isEmpty) {
+        _firstnameController.text = widget.user.firstname!;
+    }
+
+    if (widget.user.lastname != null && widget.user.lastname!.isEmpty) {
+      _firstnameController.text = widget.user.lastname!;
+    }
+    _emailController.text = widget.user.email!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +122,7 @@ class _EditProfileState extends State<EditProfile> {
                             return "* Vui lòng nhập tên";
                           }
 
-                          if (value.length < 2 ||
-                              value.length > 32) {
+                          if (value.length < 2 || value.length > 32) {
                             return "* Tên phải có độ dài từ 2 đến 32 ký tự";
                           }
 
@@ -162,7 +169,7 @@ class _EditProfileState extends State<EditProfile> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  if(_formKeyEdit.currentState!.validate()) {}
+                  if (_formKeyEdit.currentState!.validate()) {}
                 },
                 child: const Text(
                   'Save',
