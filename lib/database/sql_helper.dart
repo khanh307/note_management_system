@@ -1,3 +1,4 @@
+import 'package:note_manangement_system/model/note_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -173,5 +174,47 @@ class SQLHelper {
     final db = await SQLHelper.db();
     await db.update(_userTable, {_columnPassword: password},
         where: '$_columnEmail = ?', whereArgs: [email]);
+  }
+
+  static Future<List<Map<String, Object?>>> getNotes(int userid) async {
+    final db = await SQLHelper.db();
+    final query = '''SELECT $_noteTable.$_columnId, 
+        $_noteTable.$_columnName, $_categoryTable.$_columnName as categoryName, 
+        $_statusTable.$_columnName as statusName, $_priorityTable.$_columnName as priorityName, 
+        $_noteTable.$_columnPlanDate, $_noteTable.$_columnCreateAt  FROM $_noteTable, $_categoryTable, $_statusTable, 
+        $_priorityTable WHERE $_noteTable.$_columnUserId = $userid AND $_noteTable.$_columnCategoryId = 
+        $_categoryTable.$_columnId AND $_noteTable.$_columnPriorityId = $_priorityTable.$_columnId AND 
+        $_noteTable.$_columnStatusId = $_statusTable.$_columnId''';
+    return await db.rawQuery(query);
+  }
+
+  static Future<List<Map<String, Object?>>> getCategories(int userid) async {
+    final db = await SQLHelper.db();
+    return db.query(_categoryTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+  }
+
+  static Future<List<Map<String, Object?>>> getPriorities(int userid) async {
+    final db = await SQLHelper.db();
+    return db.query(_priorityTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+  }
+
+  static Future<List<Map<String, Object?>>> getStatus(int userid) async {
+    final db = await SQLHelper.db();
+    return db.query(_statusTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+  }
+
+  static Future<int> insertNote(Note note) async {
+    final db = await SQLHelper.db();
+    return db.insert(_noteTable, note.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<int> deleteNote(int noteId) async {
+    final db = await SQLHelper.db();
+    return db.delete(_noteTable, where: '$_columnId = ?', whereArgs: [noteId]);
+  }
+
+  static Future<int> updateNote(Note note) async {
+    final db = await SQLHelper.db();
+    return db.update(_noteTable, note.toMap(), where: '$_columnId = ?', whereArgs: [note.id]);
   }
 }
