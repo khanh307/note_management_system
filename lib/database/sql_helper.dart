@@ -101,12 +101,12 @@ class SQLHelper {
   }
 
   //function check login
-  static Future<List<Map<String, dynamic>>> getUser(String email, String password) async {
+  static Future<List<Map<String, dynamic>>> getUser(
+      String email, String password) async {
     final db = await SQLHelper.db();
     return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
         whereArgs: [email, password]);
-
   }
 
   // Email duplicate check function in database
@@ -123,7 +123,6 @@ class SQLHelper {
 
   //add account
   static Future<bool> addAccount(String email, String password) async {
-
     final isDuplicate = await checkDuplicateEmail(email);
     if (isDuplicate) {
       return false;
@@ -135,5 +134,15 @@ class SQLHelper {
       SQLHelper.addUser(user);
       return true;
     }
+  }
+
+  // Dashboard: Note's status percentage statistics
+  static Future<List<Map<String, dynamic>>> countStatus() async {
+    final db = await SQLHelper.db();
+    final count = db.rawQuery("""SELECT statusId,
+          (Count(statusId)* 100 / (Select Count(*) From note)) as percent
+    FROM note
+    GROUP BY statusId """);
+    return count;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/database/sql_helper.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -9,10 +10,20 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
+  List<Map<String, dynamic>> _countStatus = [];
+
+  void countNote() async {
+    final data = await SQLHelper.countStatus();
+    setState(() {
+      _countStatus = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    countNote();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +31,9 @@ class _DashBoardState extends State<DashBoard> {
       child: AspectRatio(
         aspectRatio: 1,
         child: DChartPie(
+          // data: _countStatus.map((e) {
+          //   return {'domain': e['statusId'], 'measure': e['percent']};
+          // }).toList(),
           data: const [
             {'domain': 'Pending', 'measure': 70},
             {'domain': 'Done', 'measure': 60},
@@ -31,8 +45,10 @@ class _DashBoardState extends State<DashBoard> {
                 return Colors.grey[600];
               case 'Done':
                 return Colors.blue[900];
-              default:
+              case 'Pending':
                 return Colors.red;
+              default:
+                return Colors.black;
             }
           },
           labelColor: Colors.white,
