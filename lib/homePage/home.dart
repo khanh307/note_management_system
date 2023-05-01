@@ -32,7 +32,7 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   var _title = 'Dashboard Form';
-  dynamic _widget = const EditProfile();
+  dynamic _widget;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +113,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Edit Profile Form';
-                    _widget = const EditProfile();
+                    _widget = EditProfile(user: widget.user);
                   });
                 },
               ),
@@ -123,7 +123,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Change password Form';
-                    // _widget = ChangePassword(user:);
+                    _widget = ChangePassword(user: widget.user);
                   });
                 },
               ),

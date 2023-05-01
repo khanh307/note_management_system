@@ -1,23 +1,21 @@
-// ignore_for_file: sort_child_properties_last, no_logic_in_create_state, use_key_in_widget_constructors, use_build_context_synchronously
+// ignore_for_file: sort_child_properties_last, no_logic_in_create_state, use_key_in_widget_constructors, use_build_context_synchronously, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+
 class ChangePassword extends StatefulWidget {
-  
   final UserModel user;
 
-  const ChangePassword({required this.user, Key? key}) : super(key: key);
-
+  const ChangePassword({required this.user});
 
   @override
   State<ChangePassword> createState() => _ChangePasswordState(user: user);
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-
   UserModel user;
   _ChangePasswordState({required this.user});
 
@@ -25,6 +23,29 @@ class _ChangePasswordState extends State<ChangePassword> {
   final _currentPassword = TextEditingController();
   final _newPassword = TextEditingController();
   final _confirmPassword = TextEditingController();
+
+  bool _obscureText = true;
+   bool _obscureTextConfirm = true;
+    bool _obscureTextNew = true;
+
+  void _togglePassword() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  void _toggleNewPassword() {
+    setState(() {
+      _obscureTextNew = !_obscureTextNew;
+    });
+  }
+
+
+  void _toggleConFirmPassword() {
+    setState(() {
+      _obscureTextConfirm = !_obscureTextConfirm;
+    });
+  }
 
   @override
   void dispose() {
@@ -54,7 +75,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                     children: [
                       TextFormField(
                         controller: _currentPassword,
-                        decoration: const InputDecoration(
+                        obscureText: _obscureText,
+                        decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
@@ -67,6 +89,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                           hintText: 'Enter your current password',
                           fillColor: Colors.white10,
                           filled: true,
+                          suffixIcon: GestureDetector(
+                            onTap: _togglePassword,
+                            child: Icon(
+                              _obscureText
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: _obscureText ? Colors.grey : Colors.blue,
+                            ),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -82,7 +113,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           FilteringTextInputFormatter.deny(RegExp(r"\s")),
                         ],
                         controller: _newPassword,
-                        decoration: const InputDecoration(
+                        obscureText: _obscureTextNew,
+                        decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
@@ -95,10 +127,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                           hintText: 'Enter your new password',
                           fillColor: Colors.white10,
                           filled: true,
+                          suffixIcon: GestureDetector(
+                            onTap: _toggleNewPassword,
+                            child: Icon(
+                              _obscureTextNew
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: _obscureTextNew ? Colors.grey : Colors.blue,
+                            ),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '* Vui long nhập mật khẩu';
+                            return '* Vui lòng nhập mật khẩu';
                           }
 
                           if (value.trim().length < 6 ||
@@ -125,7 +166,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           FilteringTextInputFormatter.deny(RegExp(r"\s")),
                         ],
                         controller: _confirmPassword,
-                        decoration: const InputDecoration(
+                        obscureText: _obscureTextConfirm,
+                        decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(40)),
@@ -138,6 +180,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                           hintText: 'Confirm password',
                           fillColor: Colors.white10,
                           filled: true,
+                          suffixIcon: GestureDetector(
+                            onTap: _toggleConFirmPassword,
+                            child: Icon(
+                              _obscureTextConfirm
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: _obscureTextConfirm ? Colors.grey : Colors.blue,
+                            ),
+                          ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -160,16 +211,41 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: ElevatedButton(
                 onPressed: () async {
                   if (_formChange.currentState!.validate()) {
-                    if (user.password ==
+                    if (widget.user.password ==
                         hashPassword(_currentPassword.text.trim())) {
-                      await SQLHelper.changePassword(
-                        user.email!, _confirmPassword.text.trim());
+                      await SQLHelper.changePassword(widget.user.email!,
+                          hashPassword(_confirmPassword.text.trim()));
                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Success')));
+                        const SnackBar(
+                          content: Text(
+                            'Thay đổi mật khẩu thành công',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18),
+                          ),
+                          duration: Duration(seconds: 3),
+                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
+                        ),
+                      );
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Thay đổi mật khẩu không thành công',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18),
+                          ),
+                          duration: Duration(seconds: 3),
+                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
+                        ),
+                      );
                     }
-                  } else {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(const SnackBar(content: Text('Failed')));
                   }
                 },
                 child: const Text(

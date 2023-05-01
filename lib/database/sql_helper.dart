@@ -145,34 +145,50 @@ class SQLHelper {
     }
   }
 
-  // update a user profile in the database
-  static Future<int> updateUserProfile(UserModel user) async {
-    final db = await SQLHelper.db();
-    return await db.update(_userTable, user.toMap(),
-        where: '$_columnId = ?', whereArgs: [user.id]);
-  }
+  // load user
+  static Future<List<UserModel>> loadDataUser() async {
+    // Initialize the user list
+    List<UserModel> userList = [];
 
-  // load user by email
-  static Future<UserModel> getUserByEmail(String email) async {
-    final db = await SQLHelper.db();
+    final Database db = await SQLHelper.db();
 
-    final result = await db.query(
-      _userTable,
-      where: '$_columnEmail = ?',
-      whereArgs: [email],
-    );
+    final List<Map<String, dynamic>> maps = await db.query(_userTable);
 
-    if (result.isNotEmpty) {
-      return UserModel.fromMap(result.first);
-    } else {
-      throw Exception('User not found');
+    // Browse the list of records and create a User object from each record
+    for (Map<String, dynamic> map in maps) {
+      UserModel user = UserModel(
+        id: map['id'],
+        firstname: map['firstname'],
+        lastname: map['lastname'],
+        email: map['email'],
+      );
+      // Add users to the list of users
+      userList.add(user);
     }
+
+    return userList;
   }
 
   //function change password
- static Future<void> changePassword(String email, String password) async {
+  static Future<void> changePassword(String email, String password) async {
     final db = await SQLHelper.db();
     await db.update(_userTable, {_columnPassword: password},
         where: '$_columnEmail = ?', whereArgs: [email]);
+  }
+
+  //function edit profile
+  static Future<int> updateUser(
+      int id, String firstname, String lastname, String email) async {
+    final Database db = await SQLHelper.db();
+    return await db.update(
+      _userTable,
+      {
+        'firstname': firstname,
+        'lastname': lastname,
+        'email': email,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }
