@@ -1,3 +1,4 @@
+import 'package:note_manangement_system/model/note_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 

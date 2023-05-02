@@ -17,6 +17,7 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   UserModel user;
+
   _ChangePasswordState({required this.user});
 
   final _formChange = GlobalKey<FormState>();
@@ -25,8 +26,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   final _confirmPassword = TextEditingController();
 
   bool _obscureText = true;
-   bool _obscureTextConfirm = true;
-    bool _obscureTextNew = true;
+  bool _obscureTextConfirm = true;
+  bool _obscureTextNew = true;
 
   void _togglePassword() {
     setState(() {
@@ -39,7 +40,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       _obscureTextNew = !_obscureTextNew;
     });
   }
-
 
   void _toggleConFirmPassword() {
     setState(() {
@@ -103,6 +103,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (value == null || value.isEmpty) {
                             return '* Vui lòng nhập lại mật khẩu';
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(
@@ -133,7 +134,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureTextNew
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: _obscureTextNew ? Colors.grey : Colors.blue,
+                              color:
+                                  _obscureTextNew ? Colors.grey : Colors.blue,
                             ),
                           ),
                         ),
@@ -156,6 +158,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (!digit.hasMatch(value)) {
                             return '* Vui lòng nhập ít nhât 1 số';
                           }
+
+                          return null;
                         },
                       ),
                       const SizedBox(
@@ -186,7 +190,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureTextConfirm
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: _obscureTextConfirm ? Colors.grey : Colors.blue,
+                              color: _obscureTextConfirm
+                                  ? Colors.grey
+                                  : Colors.blue,
                             ),
                           ),
                         ),

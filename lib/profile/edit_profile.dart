@@ -62,7 +62,6 @@ class _EditProfileState extends State<EditProfile> {
 
     try {
       await SQLHelper.updateUser(widget.user.id!, firstname, lastname, email);
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -125,7 +124,7 @@ class _EditProfileState extends State<EditProfile> {
                             borderSide: BorderSide(color: Colors.blue),
                           ),
                           prefixIcon: Icon(Icons.person),
-                          hintText: 'Enter your fristname',
+                          hintText: 'Enter your firstname',
                           fillColor: Colors.white10,
                           filled: true,
                         ),
@@ -142,6 +141,8 @@ class _EditProfileState extends State<EditProfile> {
                           if (value.endsWith(' ')) {
                             return "* Vui lòng không kết thúc bằng dấu cách";
                           }
+
+                          return null;
                         },
                       ),
                       const SizedBox(
@@ -179,6 +180,7 @@ class _EditProfileState extends State<EditProfile> {
                           if (value.endsWith(' ')) {
                             return "* Vui lòng không kết thúc bằng dấu cách";
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(
@@ -208,6 +210,7 @@ class _EditProfileState extends State<EditProfile> {
                           if (!isValidEmail(value)) {
                             return '* Địa chỉ email hoặc mật khẩu không đúng';
                           }
+                          return null;
                         },
                       )
                     ],

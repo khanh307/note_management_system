@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/changePassword/change_password.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/note/note_screen.dart';
 import 'package:note_manangement_system/profile/edit_profile.dart';
 
 
