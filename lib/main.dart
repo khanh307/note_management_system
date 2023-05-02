@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: NoteScreen(user: UserModel(id: 1)),
+      home: const SignInPage(),
     );
   }
 }
