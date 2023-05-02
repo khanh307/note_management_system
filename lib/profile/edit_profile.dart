@@ -1,5 +1,7 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_literals_to_create_immutables, sort_child_properties_last, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 import 'package:flutter/services.dart';
@@ -23,22 +25,70 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> _reFreshUsers() async {
     setState(() {
+      _isLoading != _isLoading;
+    });
+
+    final userData = await SQLHelper.loadDataUser();
+
+    if (userData.isNotEmpty) {
+      _firstnameController.text = userData[1].firstname ?? '';
+      _lastnameController.text = userData[2].lastname ?? '';
+      _emailController.text = userData[3].email ?? '';
+    }
+    setState(() {
       _isLoading = false;
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.user.firstname != null && widget.user.firstname!.isEmpty) {
-        _firstnameController.text = widget.user.firstname!;
+      _firstnameController.text = widget.user.firstname!;
     }
 
     if (widget.user.lastname != null && widget.user.lastname!.isEmpty) {
-      _firstnameController.text = widget.user.lastname!;
+      _lastnameController.text = widget.user.lastname!;
     }
     _emailController.text = widget.user.email!;
+
+    _reFreshUsers();
+  }
+
+  void _updateProfile() async {
+    String firstname = _firstnameController.text;
+    String lastname = _lastnameController.text;
+    String email = _emailController.text;
+
+    try {
+      await SQLHelper.updateUser(widget.user.id!, firstname, lastname, email);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Thay đổi thông tin thành công',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+          ),
+          duration: Duration(seconds: 3),
+          backgroundColor: Color.fromARGB(255, 113, 176, 224),
+        ),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Thay đổi thông tin thất bại',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+          ),
+          duration: Duration(seconds: 3),
+          backgroundColor: Color.fromARGB(255, 113, 176, 224),
+        ),
+      );
+    }
   }
 
   @override
@@ -169,7 +219,9 @@ class _EditProfileState extends State<EditProfile> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  if (_formKeyEdit.currentState!.validate()) {}
+                  if (_formKeyEdit.currentState!.validate()) {
+                    _updateProfile();
+                  }
                 },
                 child: const Text(
                   'Save',
