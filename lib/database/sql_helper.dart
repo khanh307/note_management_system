@@ -179,11 +179,17 @@ class SQLHelper {
   static Future<List<Map<String, Object?>>> getNotes(int userid) async {
     final db = await SQLHelper.db();
     final query = '''SELECT $_noteTable.$_columnId, 
-        $_noteTable.$_columnName, $_categoryTable.$_columnName as categoryName, 
-        $_statusTable.$_columnName as statusName, $_priorityTable.$_columnName as priorityName, 
-        $_noteTable.$_columnPlanDate, $_noteTable.$_columnCreateAt  FROM $_noteTable, $_categoryTable, $_statusTable, 
-        $_priorityTable WHERE $_noteTable.$_columnUserId = $userid AND $_noteTable.$_columnCategoryId = 
-        $_categoryTable.$_columnId AND $_noteTable.$_columnPriorityId = $_priorityTable.$_columnId AND 
+        $_columnPriorityId, $_columnStatusId, $_columnCategoryId,
+        $_noteTable.$_columnUserId, $_noteTable.$_columnName, 
+        $_categoryTable.$_columnName as categoryName, 
+        $_statusTable.$_columnName as statusName, 
+        $_priorityTable.$_columnName as priorityName, 
+        $_noteTable.$_columnPlanDate, $_noteTable.$_columnCreateAt  
+        FROM $_noteTable, $_categoryTable, $_statusTable, 
+        $_priorityTable WHERE $_noteTable.$_columnUserId = $userid 
+        AND $_noteTable.$_columnCategoryId = 
+        $_categoryTable.$_columnId AND $_noteTable.$_columnPriorityId 
+        = $_priorityTable.$_columnId AND 
         $_noteTable.$_columnStatusId = $_statusTable.$_columnId''';
     return await db.rawQuery(query);
   }
@@ -216,5 +222,13 @@ class SQLHelper {
   static Future<int> updateNote(Note note) async {
     final db = await SQLHelper.db();
     return db.update(_noteTable, note.toMap(), where: '$_columnId = ?', whereArgs: [note.id]);
+  }
+
+  static Future<bool> checkDuplicateNote(String name) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await
+    db.query(_noteTable, where: '$_columnName = ?' ,whereArgs: [name]);
+
+    return data.isEmpty;
   }
 }
