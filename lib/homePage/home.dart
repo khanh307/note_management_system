@@ -29,7 +29,7 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   var _title = 'Dashboard Form';
-  dynamic _widget = const DashBoard();
+  dynamic _widget;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Dashboard Form';
-                    _widget = const DashBoard();
+                    _widget = DashBoard(user: widget.user);
                   });
                 },
               ),
