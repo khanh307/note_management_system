@@ -187,13 +187,7 @@ class SQLHelper {
     }
 
     if (email != null) {
-      bool isDuplicateEmail = await checkDuplicateEmail(email);
-
-      if (isDuplicateEmail) {
-        return 0; // Không cập nhật và trả về 0 nếu email bị trùng
-      } else {
-        updateValues['email'] = email;
-      }
+      updateValues['email'] = email;
     }
 
     int result = await db.update(

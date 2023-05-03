@@ -29,7 +29,7 @@ class _EditProfileState extends State<EditProfile> {
     _firstnameController.text = widget.user?.firstname ?? '';
     _lastnameController.text = widget.user?.lastname ?? '';
     _emailController.text = widget.user?.email ?? '';
-    if (widget.user != null) {
+    if (widget.user != null && widget.user.id != null) {
       _loadUserData(widget.user.id!);
     }
   }
@@ -75,7 +75,6 @@ class _EditProfileState extends State<EditProfile> {
         ),
       );
     } catch (error) {
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
