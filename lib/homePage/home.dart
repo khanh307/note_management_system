@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/Model/user_model.dart';
+
+import 'package:note_manangement_system/category/category_screen.dart';
+import 'package:note_manangement_system/changePassword/change_password.dart';
+import 'package:note_manangement_system/dashboard/dashboard.dart';
+import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/note/note_screen.dart';
+import 'package:note_manangement_system/priority/priority_screen.dart';
+import 'package:note_manangement_system/profile/edit_profile.dart';
+import 'package:note_manangement_system/status/status_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final UserModel user;
@@ -34,7 +42,7 @@ class _HomePageState extends State<_HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _widget = EditProfile(user: widget.user);
+    _widget = DashBoard(user: widget.user);
   }
 
   @override

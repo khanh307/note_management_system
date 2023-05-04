@@ -1,6 +1,6 @@
 import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 
 class DashBoard extends StatefulWidget {
