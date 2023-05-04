@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/model/priority_model.dart';
 import 'package:note_manangement_system/model/status_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../model/journal_model.dart';
@@ -190,6 +191,36 @@ class SQLHelper {
   }
 
   static Future<void> deleteItem2(int id) async {
+    final db = await SQLHelper.db();
+
+    try {
+      await db.delete(_statusTable, where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint('Something went wrong when deleting an item: $err');
+    }
+  }
+
+  static Future<int> createItem3(PriorityModel priority) async {
+    final db = await SQLHelper.db();
+    final id = await db.insert(_statusTable, priority.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  static Future<List<Map<String, dynamic>>> getItems3() async {
+    final db = await SQLHelper.db();
+    return db.query(_statusTable, orderBy: "id");
+  }
+
+  static Future<int> updateItem3(PriorityModel priority) async {
+    final db = await SQLHelper.db();
+
+    final result = await db.update(_statusTable, priority.toMap(),
+        where: "id = ?", whereArgs: [priority.id]);
+    return result;
+  }
+
+  static Future<void> deleteItem3(int id) async {
     final db = await SQLHelper.db();
 
     try {

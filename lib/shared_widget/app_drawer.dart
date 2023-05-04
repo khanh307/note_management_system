@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/priority/priority_screen.dart';
 import 'package:note_manangement_system/status/status_screen.dart';
 
 import '../category/category_screen.dart';
@@ -52,9 +53,15 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-              leading: const Icon(Icons.video_collection_rounded),
-              title: const Text('Priority'),
-              onTap: () {}),
+            leading: const Icon(Icons.video_collection_rounded),
+            title: const Text('Priority'),
+            onTap: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => PriorityScreen(
+                        user: user,
+                      )));
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.restart_alt),
             title: const Text('Status'),
