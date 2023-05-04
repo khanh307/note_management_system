@@ -148,28 +148,23 @@ class SQLHelper {
     }
   }
 
-  // load user
-  static Future<List<UserModel>> loadDataUser() async {
-    // Initialize the user list
-    List<UserModel> userList = [];
+  //load user
+  static Future<UserModel?> loadDataUser(int id) async {
+    final db = await SQLHelper.db();
+    final List<Map<String, dynamic>> maps =
+        await db.query(_userTable, where: "id = ?", whereArgs: [id]);
 
-    final Database db = await SQLHelper.db();
-
-    final List<Map<String, dynamic>> maps = await db.query(_userTable);
-
-    // Browse the list of records and create a User object from each record
-    for (Map<String, dynamic> map in maps) {
+    if (maps.isNotEmpty) {
+      Map<String, dynamic> map = maps.first;
       UserModel user = UserModel(
         id: map['id'],
         firstname: map['firstname'],
         lastname: map['lastname'],
         email: map['email'],
       );
-      // Add users to the list of users
-      userList.add(user);
+      return user;
     }
-
-    return userList;
+    return null;
   }
 
   //function change password
@@ -181,18 +176,31 @@ class SQLHelper {
 
   //function edit profile
   static Future<int> updateUser(
-      int id, String firstname, String lastname, String email) async {
-    final Database db = await SQLHelper.db();
-    return await db.update(
+      int id, String? firstname, String? lastname, String? email) async {
+    final db = await SQLHelper.db();
+
+    Map<String, dynamic> updateValues = {};
+
+    if (firstname != null) {
+      updateValues['firstname'] = firstname;
+    }
+
+    if (lastname != null) {
+      updateValues['lastname'] = lastname;
+    }
+
+    if (email != null) {
+      updateValues['email'] = email;
+    }
+
+    int result = await db.update(
       _userTable,
-      {
-        'firstname': firstname,
-        'lastname': lastname,
-        'email': email,
-      },
+      updateValues,
       where: 'id = ?',
       whereArgs: [id],
     );
+
+    return result;
   }
 
   static Future<List<Map<String, Object?>>> getNotes(int userid) async {
