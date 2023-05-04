@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/note/my_dropdown_button.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/validator/note_validator.dart';
 
 import '../database/sql_helper.dart';
@@ -31,7 +32,7 @@ class _NoteScreenState extends State<NoteScreen> {
   final _keyForm = GlobalKey<FormState>();
 
   // final _keyDateField = GlobalKey<FormFieldState>();
-  String? _validateNameValue = '* Vui lòng nhập tên';
+  String? _validateNameValue;
 
   String _formatDate(DateTime date) {
     return DateFormat('dd/MM/yyyy').format(date);
@@ -70,16 +71,14 @@ class _NoteScreenState extends State<NoteScreen> {
     await SQLHelper.insertNote(note);
     if (!mounted) return;
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully insert a note!')));
+    showSnackBar(context, 'Successfully insert a note!');
     _refreshData();
   }
 
   Future<void> _deleteNote(note) async {
     String name = note['name'];
     if (!_checkNoteDone(note)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('* Không xoá được $name này vì chưa quá 6 tháng')));
+      showSnackBar(context, '* Không xoá được $name này vì chưa quá 6 tháng');
     } else {
       showDialog(
           context: context,
@@ -97,9 +96,7 @@ class _NoteScreenState extends State<NoteScreen> {
                         Navigator.of(context).pop();
                         await SQLHelper.deleteNote(note['id']);
                         if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Successfully delete a note!')));
+                        showSnackBar(context, 'Successfully delete a note!');
                         _refreshData();
                       },
                       child: const Text('Có')),
@@ -109,7 +106,8 @@ class _NoteScreenState extends State<NoteScreen> {
   }
 
   bool _checkNoteDone(note) {
-    if (note['statusName'].toString().toLowerCase() == 'done') {
+    if (note['statusName'].toString().toLowerCase() == 'done' ||
+        note['statusName'].toString().toLowerCase() == 'finish') {
       DateTime dateDone = DateTime.parse(note['planDate']);
       DateTime endDate = dateDone.add(const Duration(days: 30 * 6));
       if (DateTime.now().difference(endDate).inDays < 0) {
@@ -135,8 +133,7 @@ class _NoteScreenState extends State<NoteScreen> {
 
     if (!mounted) return;
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully update a note!')));
+    showSnackBar(context, 'Successfully update a note!');
 
     _refreshData();
   }
@@ -193,18 +190,11 @@ class _NoteScreenState extends State<NoteScreen> {
                               border: OutlineInputBorder(),
                               labelText: 'Enter note name'),
                           validator: (value) {
-                            if (id != null &&
-                                (value == null || value.isEmpty)) {
-                              return '* Vui lòng nhập tên';
-                            }
-                            if (id == null) {
-                              return _validateNameValue;
-                            }
-                            return null;
+                            return _validateNameValue;
                           },
                           onChanged: (value) async {
-                            String? result =
-                                await NoteValidator.nameValidate(value);
+                            String? result = await NoteValidator.nameValidate(
+                                _nameController.text, id, widget.user.id!);
                             setState(() {
                               _validateNameValue = result;
                             });
@@ -286,7 +276,7 @@ class _NoteScreenState extends State<NoteScreen> {
                             ).then((value) {
                               setState(() {
                                 _dateTime = value!;
-                                _dateController.text = _formatDate(value!);
+                                _dateController.text = _formatDate(value);
                               });
                             });
                           },

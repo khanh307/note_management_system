@@ -118,7 +118,6 @@ class SQLHelper {
     return await db.query(_userTable,
         where: '$_columnEmail = ? AND $_columnPassword = ?',
         whereArgs: [email, password]);
-
   }
 
   // Email duplicate check function in database
@@ -268,10 +267,13 @@ class SQLHelper {
         where: '$_columnId = ?', whereArgs: [note.id]);
   }
 
-  static Future<bool> checkDuplicateNote(String name) async {
+  static Future<bool> checkDuplicateNote(
+      String name, int id, int userId) async {
     final db = await SQLHelper.db();
-    List<Map<String, dynamic>> data = await db
-        .query(_noteTable, where: '$_columnName = ?', whereArgs: [name]);
+    List<Map<String, dynamic>> data =
+        await db.query(_noteTable, where: '''$_columnName = ?
+        AND $_columnUserId = ?
+        AND $_columnId != ?''', whereArgs: [name, userId, id]);
 
     return data.isEmpty;
   }
@@ -288,19 +290,18 @@ class SQLHelper {
         where: '$_columnId = ?', whereArgs: [category.id]);
   }
 
-  static Future<int> deleteCategory(int? id) async{
+  static Future<int> deleteCategory(int? id) async {
     final db = await SQLHelper.db();
     return db.delete(_categoryTable, where: '$_columnId = ?', whereArgs: [id]);
   }
 
-  static Future<bool> checkDuplicateCategory(String name, int id, int userId) async {
+  static Future<bool> checkDuplicateCategory(
+      String name, int id, int userId) async {
     final db = await SQLHelper.db();
-    List<Map<String, dynamic>> data = await db
-        .query(_categoryTable,
-        where: '''$_columnName = ? 
+    List<Map<String, dynamic>> data =
+        await db.query(_categoryTable, where: '''$_columnName = ? 
         AND $_columnId != ?
-        AND $_columnUserId = ?''',
-        whereArgs: [name, id, userId]);
+        AND $_columnUserId = ?''', whereArgs: [name, id, userId]);
 
     return data.isNotEmpty;
   }
@@ -324,19 +325,18 @@ class SQLHelper {
         where: '$_columnId = ?', whereArgs: [priority.id]);
   }
 
-  static Future<int> deletePriority(int? id) async{
+  static Future<int> deletePriority(int? id) async {
     final db = await SQLHelper.db();
     return db.delete(_priorityTable, where: '$_columnId = ?', whereArgs: [id]);
   }
 
-  static Future<bool> checkDuplicatePriority(String name, int id, int userId) async {
+  static Future<bool> checkDuplicatePriority(
+      String name, int id, int userId) async {
     final db = await SQLHelper.db();
-    List<Map<String, dynamic>> data = await db
-        .query(_priorityTable,
-        where: '''$_columnName = ? 
+    List<Map<String, dynamic>> data =
+        await db.query(_priorityTable, where: '''$_columnName = ? 
         AND $_columnId != ?
-        AND $_columnUserId = ?''',
-        whereArgs: [name, id, userId]);
+        AND $_columnUserId = ?''', whereArgs: [name, id, userId]);
 
     return data.isNotEmpty;
   }
@@ -360,19 +360,18 @@ class SQLHelper {
         where: '$_columnId = ?', whereArgs: [status.id]);
   }
 
-  static Future<int> deleteStatus(int? id) async{
+  static Future<int> deleteStatus(int? id) async {
     final db = await SQLHelper.db();
     return db.delete(_statusTable, where: '$_columnId = ?', whereArgs: [id]);
   }
 
-  static Future<bool> checkDuplicateStatus(String name, int id, int userId) async {
+  static Future<bool> checkDuplicateStatus(
+      String name, int id, int userId) async {
     final db = await SQLHelper.db();
-    List<Map<String, dynamic>> data = await db
-        .query(_statusTable,
-        where: '''$_columnName = ? 
+    List<Map<String, dynamic>> data =
+        await db.query(_statusTable, where: '''$_columnName = ? 
         AND $_columnId != ?
-        AND $_columnUserId = ?''',
-        whereArgs: [name, id, userId]);
+        AND $_columnUserId = ?''', whereArgs: [name, id, userId]);
 
     return data.isNotEmpty;
   }

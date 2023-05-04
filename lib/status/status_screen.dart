@@ -78,7 +78,7 @@ class _StatusScreenState extends State<StatusScreen> {
                   },
                   onChanged: (value) async {
                     setState(() async {
-                      _isDuplicate = await SQLHelper.checkDuplicatePriority(
+                      _isDuplicate = await SQLHelper.checkDuplicateStatus(
                           _nameController.text,
                           (id == null) ? -1 : id,
                           widget.user.id!);

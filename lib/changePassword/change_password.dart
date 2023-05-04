@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 
 class ChangePassword extends StatefulWidget {
@@ -221,36 +222,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                         hashPassword(_currentPassword.text.trim())) {
                       await SQLHelper.changePassword(widget.user.email!,
                           hashPassword(_confirmPassword.text.trim()));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Thay đổi mật khẩu thành công',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18),
-                          ),
-                          duration: Duration(seconds: 3),
-                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-                        ),
-                      );
+                      showSnackBar(context, 'Thay đổi mật khẩu thành công');
                     } else {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Thay đổi mật khẩu không thành công',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18),
-                          ),
-                          duration: Duration(seconds: 3),
-                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-                        ),
-                      );
+                      showSnackBar(context, 'Thay đổi mật khẩu không thành công');
                     }
                   }
                 },

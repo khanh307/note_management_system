@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/category_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 
 class CategoryScreen extends StatefulWidget {
   final UserModel user;
@@ -117,9 +118,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
     ));
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Successfully insert ${_nameController.text}'),
-    ));
+    showSnackBar(context, 'Successfully insert ${_nameController.text}');
+    Navigator.of(context).pop();
     _refreshJournals();
   }
 
@@ -131,8 +131,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if (!mounted) return;
     _nameController.text = '';
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully update a category!')));
+    showSnackBar(context, 'Successfully update a category!');
     _refreshJournals();
   }
 
@@ -141,9 +140,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     if (isAccept) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('* Không xoá được ${category['name']} này vì đã có note'),
-      ));
+      showSnackBar(context, '* Không xoá được ${category['name']} này vì đã có note');
     } else {
       final AlertDialog dialog = AlertDialog(
         title: const Text('Delete'),
@@ -156,8 +153,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               onPressed: () async {
                 await SQLHelper.deleteCategory(category['id']);
                 if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('${category['name']} đã xoá thành công"')));
+                showSnackBar(context, '${category['name']} đã xoá thành công');
                 _refreshJournals();
                 Navigator.pop(context);
               },

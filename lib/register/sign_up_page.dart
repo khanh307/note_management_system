@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/login/sign_in_page.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -287,21 +288,7 @@ class _SignUpHomeState extends State<SignUpHome> {
                               (route) => false);
                         } else {
                           if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                '* Địa chỉ email này đã tồn tại',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18),
-                              ),
-                              duration: Duration(seconds: 3),
-                              backgroundColor:
-                                  Color.fromARGB(255, 113, 176, 224),
-                            ),
-                          );
+                          showSnackBar(context, '* Địa chỉ email này đã tồn tại');
                         }
                       }
 

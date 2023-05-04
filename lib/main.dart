@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(user: UserModel(id: 1, email: "abc"),),
+      home: const SignInPage(),
     );
   }
 }

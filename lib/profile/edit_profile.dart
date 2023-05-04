@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 import 'package:flutter/services.dart';
 
@@ -26,9 +27,9 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    _firstnameController.text = widget.user?.firstname ?? '';
-    _lastnameController.text = widget.user?.lastname ?? '';
-    _emailController.text = widget.user?.email ?? '';
+    _firstnameController.text = widget.user.firstname ?? '';
+    _lastnameController.text = widget.user.lastname ?? '';
+    _emailController.text = widget.user.email ?? '';
     if (widget.user != null && widget.user.id != null) {
       _loadUserData(widget.user.id!);
     }
@@ -58,38 +59,9 @@ class _EditProfileState extends State<EditProfile> {
 
     try {
       await SQLHelper.updateUser(widget.user.id!, firstname, lastname, email);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Thay đổi thông tin thành công',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.w400,
-              fontSize: 18,
-            ),
-          ),
-          duration: Duration(seconds: 3),
-          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-        ),
-      );
+      showSnackBar(context, 'Thay đổi thông tin thành công');
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Thay đổi thông tin thất bại',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.w400,
-              fontSize: 18,
-            ),
-          ),
-          duration: Duration(seconds: 3),
-          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-        ),
-      );
+      showSnackBar(context, 'Thay đổi thông tin thất bại');
     }
   }
 
@@ -149,6 +121,8 @@ class _EditProfileState extends State<EditProfile> {
                                 if (value.endsWith(' ')) {
                                   return "* Vui lòng không kết thúc bằng dấu cách";
                                 }
+
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -187,6 +161,7 @@ class _EditProfileState extends State<EditProfile> {
                                 if (value.endsWith(' ')) {
                                   return "* Vui lòng không kết thúc bằng dấu cách";
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -217,6 +192,7 @@ class _EditProfileState extends State<EditProfile> {
                                 if (!isValidEmail(value)) {
                                   return '* Địa chỉ email hoặc mật khẩu không đúng';
                                 }
+                                return null;
                               },
                             )
                           ],

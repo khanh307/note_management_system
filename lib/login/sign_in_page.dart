@@ -4,6 +4,7 @@ import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/homePage/home.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/register/sign_up_page.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
 
 class SignInPage extends StatelessWidget {
@@ -61,18 +62,7 @@ class _SignInHomeState extends State<SignInHome> {
                   HomeScreen(user: UserModel.fromMap(user[0]))),
           (route) => false);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            '* Địa chỉ email hoặc mật khẩu không đúng',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
-          ),
-          duration: Duration(seconds: 3),
-          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-        ),
-      );
+      showSnackBar(context, '* Địa chỉ email hoặc mật khẩu không đúng');
     }
   }
 

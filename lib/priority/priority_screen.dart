@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/priority_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 
 class PriorityScreen extends StatefulWidget {
   final UserModel user;
@@ -114,9 +115,7 @@ class _PriorityScreenState extends State<PriorityScreen> {
     ));
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Successfully insert ${_nameController.text}'),
-    ));
+    showSnackBar(context, 'Successfully insert ${_nameController.text}');
     Navigator.of(context).pop();
     _refreshJournals();
   }
@@ -129,8 +128,7 @@ class _PriorityScreenState extends State<PriorityScreen> {
     if (!mounted) return;
     _nameController.text = '';
     Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully update a category!')));
+    showSnackBar(context, 'Successfully update a category!');
     _refreshJournals();
   }
 
@@ -139,9 +137,8 @@ class _PriorityScreenState extends State<PriorityScreen> {
 
     if (isAccept) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('* Không xoá được ${priority['name']} này vì đã có note'),
-      ));
+      showSnackBar(
+          context, '* Không xoá được ${priority['name']} này vì đã có note');
     } else {
       final AlertDialog dialog = AlertDialog(
         title: const Text('Delete'),
@@ -155,8 +152,7 @@ class _PriorityScreenState extends State<PriorityScreen> {
               onPressed: () async {
                 await SQLHelper.deletePriority(priority['id']);
                 if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('${priority['name']} đã xoá thành công"')));
+                showSnackBar(context, '${priority['name']} đã xoá thành công"');
                 _refreshJournals();
                 Navigator.pop(context);
               },
