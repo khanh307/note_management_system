@@ -29,41 +29,45 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: DChartPie(
-          data: _countStatus.map((e) {
-            return {'domain': e['name'], 'measure': e['percent']};
-          }).toList(),
-          fillColor: (pieData, index) {
-            switch (pieData['domain']) {
-              case 'Processing':
-                return Colors.grey[600];
-              case 'Done':
-                return Colors.blue[900];
-              case 'Pending':
-                return Colors.red;
-              default:
-                return Colors.black;
-            }
-          },
-          labelColor: Colors.white,
-          labelPosition: PieLabelPosition.inside,
-          labelFontSize: 15,
-          labelLineThickness: 1,
-          labelLinelength: 16,
-          labelPadding: 5,
-          pieLabel: (Map<dynamic, dynamic> pieData, int? index) {
-            return pieData['domain'] +
-                ': ' +
-                pieData['measure'].toString() +
-                '%';
-          },
-          strokeWidth: 2,
-          animationDuration: const Duration(milliseconds: 1200),
-        ),
-      ),
-    );
+    return _countStatus.isEmpty
+        ? const Center(
+            child: Text('Dashboard is empty!'),
+          )
+        : Center(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: DChartPie(
+                data: _countStatus.map((e) {
+                  return {'domain': e['name'], 'measure': e['percent']};
+                }).toList(),
+                fillColor: (pieData, index) {
+                  switch (pieData['domain']) {
+                    case 'Processing':
+                      return Colors.grey[600];
+                    case 'Done':
+                      return Colors.blue[900];
+                    case 'Pending':
+                      return Colors.red;
+                    default:
+                      return Colors.black;
+                  }
+                },
+                labelColor: Colors.white,
+                labelPosition: PieLabelPosition.inside,
+                labelFontSize: 15,
+                labelLineThickness: 1,
+                labelLinelength: 16,
+                labelPadding: 5,
+                pieLabel: (Map<dynamic, dynamic> pieData, int? index) {
+                  return pieData['domain'] +
+                      ': ' +
+                      pieData['measure'].toString() +
+                      '%';
+                },
+                strokeWidth: 2,
+                animationDuration: const Duration(milliseconds: 1200),
+              ),
+            ),
+          );
   }
 }
