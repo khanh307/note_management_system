@@ -1,10 +1,13 @@
 // ignore_for_file: unused_field, prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/category/category_screen.dart';
 import 'package:note_manangement_system/changePassword/change_password.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/note/note_screen.dart';
+import 'package:note_manangement_system/priority/priority_screen.dart';
 import 'package:note_manangement_system/profile/edit_profile.dart';
+import 'package:note_manangement_system/status/status_screen.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -81,6 +84,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Category Form';
+                    _widget = CategoryScreen(user: widget.user);
                   });
                 },
               ),
@@ -90,6 +94,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Priority Form';
+                    _widget = PriorityScreen(user: widget.user);
                   });
                 },
               ),
@@ -99,6 +104,7 @@ class _HomePageState extends State<_HomePage> {
                 onTap: () {
                   setState(() {
                     _title = 'Status Form';
+                    _widget = StatusScreen(user: widget.user);
                   });
                 },
               ),

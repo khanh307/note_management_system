@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:note_manangement_system/category/category_screen.dart';
+import 'package:note_manangement_system/homePage/home.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/note/note_screen.dart';
 
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SignInPage(),
+      home: HomeScreen(user: UserModel(id: 1, email: "abc"),),
     );
   }
 }

@@ -1,4 +1,7 @@
+import 'package:note_manangement_system/model/category_model.dart';
 import 'package:note_manangement_system/model/note_model.dart';
+import 'package:note_manangement_system/model/priority_model.dart';
+import 'package:note_manangement_system/model/status_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -212,22 +215,26 @@ class SQLHelper {
 
   static Future<List<Map<String, Object?>>> getCategories(int userid) async {
     final db = await SQLHelper.db();
-    return db.query(_categoryTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+    return db.query(_categoryTable,
+        where: '$_columnUserId = ?', whereArgs: [userid]);
   }
 
   static Future<List<Map<String, Object?>>> getPriorities(int userid) async {
     final db = await SQLHelper.db();
-    return db.query(_priorityTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+    return db.query(_priorityTable,
+        where: '$_columnUserId = ?', whereArgs: [userid]);
   }
 
   static Future<List<Map<String, Object?>>> getStatus(int userid) async {
     final db = await SQLHelper.db();
-    return db.query(_statusTable, where: '$_columnUserId = ?', whereArgs: [userid]);
+    return db
+        .query(_statusTable, where: '$_columnUserId = ?', whereArgs: [userid]);
   }
 
   static Future<int> insertNote(Note note) async {
     final db = await SQLHelper.db();
-    return db.insert(_noteTable, note.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return db.insert(_noteTable, note.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   static Future<int> deleteNote(int noteId) async {
@@ -237,14 +244,123 @@ class SQLHelper {
 
   static Future<int> updateNote(Note note) async {
     final db = await SQLHelper.db();
-    return db.update(_noteTable, note.toMap(), where: '$_columnId = ?', whereArgs: [note.id]);
+    return db.update(_noteTable, note.toMap(),
+        where: '$_columnId = ?', whereArgs: [note.id]);
   }
 
   static Future<bool> checkDuplicateNote(String name) async {
     final db = await SQLHelper.db();
-    List<Map<String, dynamic>> data = await
-    db.query(_noteTable, where: '$_columnName = ?' ,whereArgs: [name]);
+    List<Map<String, dynamic>> data = await db
+        .query(_noteTable, where: '$_columnName = ?', whereArgs: [name]);
 
     return data.isEmpty;
+  }
+
+  static Future<int> insertCategory(Category category) async {
+    final db = await SQLHelper.db();
+    return db.insert(_categoryTable, category.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<int> updateCategory(Category category) async {
+    final db = await SQLHelper.db();
+    return db.update(_categoryTable, category.toMap(),
+        where: '$_columnId = ?', whereArgs: [category.id]);
+  }
+
+  static Future<int> deleteCategory(int? id) async{
+    final db = await SQLHelper.db();
+    return db.delete(_categoryTable, where: '$_columnId = ?', whereArgs: [id]);
+  }
+
+  static Future<bool> checkDuplicateCategory(String name, int id, int userId) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_categoryTable,
+        where: '''$_columnName = ? 
+        AND $_columnId != ?
+        AND $_columnUserId = ?''',
+        whereArgs: [name, id, userId]);
+
+    return data.isNotEmpty;
+  }
+
+  static Future<bool> checkCategoryInNote(int id) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_noteTable, where: '$_columnCategoryId = ?', whereArgs: [id]);
+    return data.isNotEmpty;
+  }
+
+  static Future<int> insertPriority(Priority priority) async {
+    final db = await SQLHelper.db();
+    return db.insert(_priorityTable, priority.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<int> updatePriority(Priority priority) async {
+    final db = await SQLHelper.db();
+    return db.update(_priorityTable, priority.toMap(),
+        where: '$_columnId = ?', whereArgs: [priority.id]);
+  }
+
+  static Future<int> deletePriority(int? id) async{
+    final db = await SQLHelper.db();
+    return db.delete(_priorityTable, where: '$_columnId = ?', whereArgs: [id]);
+  }
+
+  static Future<bool> checkDuplicatePriority(String name, int id, int userId) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_priorityTable,
+        where: '''$_columnName = ? 
+        AND $_columnId != ?
+        AND $_columnUserId = ?''',
+        whereArgs: [name, id, userId]);
+
+    return data.isNotEmpty;
+  }
+
+  static Future<bool> checkPriorityInNote(int id) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_noteTable, where: '$_columnPriorityId = ?', whereArgs: [id]);
+    return data.isNotEmpty;
+  }
+
+  static Future<int> insertStatus(Status status) async {
+    final db = await SQLHelper.db();
+    return db.insert(_statusTable, status.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<int> updateStatus(Status status) async {
+    final db = await SQLHelper.db();
+    return db.update(_statusTable, status.toMap(),
+        where: '$_columnId = ?', whereArgs: [status.id]);
+  }
+
+  static Future<int> deleteStatus(int? id) async{
+    final db = await SQLHelper.db();
+    return db.delete(_statusTable, where: '$_columnId = ?', whereArgs: [id]);
+  }
+
+  static Future<bool> checkDuplicateStatus(String name, int id, int userId) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_statusTable,
+        where: '''$_columnName = ? 
+        AND $_columnId != ?
+        AND $_columnUserId = ?''',
+        whereArgs: [name, id, userId]);
+
+    return data.isNotEmpty;
+  }
+
+  static Future<bool> checkStatusInNote(int id) async {
+    final db = await SQLHelper.db();
+    List<Map<String, dynamic>> data = await db
+        .query(_noteTable, where: '$_columnStatusId = ?', whereArgs: [id]);
+    return data.isNotEmpty;
   }
 }

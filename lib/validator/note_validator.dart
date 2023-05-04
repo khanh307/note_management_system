@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
+import 'package:time_machine/time_machine.dart';
 
 class NoteValidator {
   static Future<String?> nameValidate(String? value) async {
@@ -44,13 +45,12 @@ class NoteValidator {
       return '* Vui lòng chọn ngày hoàn thành';
     }
 
-    if (DateFormat('dd/MM/yyy').parse(value!).isBefore(DateTime.now())) {
+    if (DateFormat('dd/MM/yyy')
+        .parse(value!)
+        .isBefore(DateTime.now())) {
       return '* Vui lòng chọn ngày hoàn thành bắt đầu từ ngày hiện tại';
     }
 
     return null;
   }
-
-
-
 }

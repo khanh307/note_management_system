@@ -81,26 +81,30 @@ class _NoteScreenState extends State<NoteScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('* Không xoá được $name này vì chưa quá 6 tháng')));
     } else {
-      final AlertDialog dialog = AlertDialog(
-        title: const Text('Delete'),
-        content: Text('* Bạn có chắc muốn xoá $name này không? Có/Không?'),
-        actions: [
-          ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Không')),
-          ElevatedButton(
-              onPressed: () async {
-                await SQLHelper.deleteNote(note['id']);
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Successfully delete a note!')));
-                _refreshData();
-                Navigator.pop(context);
-              },
-              child: const Text('Có')),
-        ],
-      );
-      showDialog(context: context, builder: (context) => dialog);
+      showDialog(
+          context: context,
+          useRootNavigator: false,
+          builder: (_) => AlertDialog(
+                title: const Text('Delete'),
+                content:
+                    Text('* Bạn có chắc muốn xoá $name này không? Có/Không?'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Không')),
+                  ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await SQLHelper.deleteNote(note['id']);
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Successfully delete a note!')));
+                        _refreshData();
+                      },
+                      child: const Text('Có')),
+                ],
+              ));
     }
   }
 
@@ -128,6 +132,7 @@ class _NoteScreenState extends State<NoteScreen> {
         planDate: _dateTime.toString());
 
     await SQLHelper.updateNote(note);
+
     if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -180,7 +185,7 @@ class _NoteScreenState extends State<NoteScreen> {
                     key: _keyForm,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         TextFormField(
                           controller: _nameController,
