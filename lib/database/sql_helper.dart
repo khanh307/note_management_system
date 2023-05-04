@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/model/status_model.dart';
 import 'package:sqflite/sqflite.dart';
 import '../model/journal_model.dart';
 
@@ -163,6 +164,36 @@ class SQLHelper {
 
     try {
       await db.delete(_categoryTable, where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint('Something went wrong when deleting an item: $err');
+    }
+  }
+
+  static Future<int> createItem2(StatusModel status) async {
+    final db = await SQLHelper.db();
+    final id = await db.insert(_statusTable, status.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  static Future<List<Map<String, dynamic>>> getItems2() async {
+    final db = await SQLHelper.db();
+    return db.query(_statusTable, orderBy: "id");
+  }
+
+  static Future<int> updateItem2(StatusModel status) async {
+    final db = await SQLHelper.db();
+
+    final result = await db.update(_statusTable, status.toMap(),
+        where: "id = ?", whereArgs: [status.id]);
+    return result;
+  }
+
+  static Future<void> deleteItem2(int id) async {
+    final db = await SQLHelper.db();
+
+    try {
+      await db.delete(_statusTable, where: "id = ?", whereArgs: [id]);
     } catch (err) {
       debugPrint('Something went wrong when deleting an item: $err');
     }

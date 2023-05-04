@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
-import '../database/sql_helper.dart';
-import '../model/journal_model.dart';
 import 'package:note_manangement_system/Model/user_model.dart';
+import 'package:note_manangement_system/model/status_model.dart';
 import 'package:note_manangement_system/shared_widget/app_drawer.dart';
+import '../database/sql_helper.dart';
 
-class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({super.key, required this.user});
+class StatusScreen extends StatefulWidget {
+  const StatusScreen({super.key, required this.user});
   final UserModel user;
 
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<StatusScreen> createState() => _StatusScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
-  List<Map<String, dynamic>> _journals = [];
+class _StatusScreenState extends State<StatusScreen> {
+  List<Map<String, dynamic>> _status = [];
 
   bool _isloading = true;
+  bool _isdone = false;
 
-  Future<void> _refreshJournals() async {
-    final data = await SQLHelper.getItems();
+  Future<void> _refresh() async {
+    final data = await SQLHelper.getItems2();
 
     setState(() {
-      _journals = data;
+      _status = data;
       _isloading = false;
     });
   }
@@ -29,7 +30,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
     super.initState();
-    _refreshJournals();
+    _refresh();
   }
 
   final TextEditingController _nameController = TextEditingController();
@@ -37,7 +38,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void _showForm(int? id) async {
     if (id != null) {
       final existingJournal =
-          _journals.firstWhere((element) => element['id'] == id);
+          _status.firstWhere((element) => element['id'] == id);
       _nameController.text = existingJournal['name'];
     }
 
@@ -57,7 +58,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(hintText: 'Name'),
+              decoration: const InputDecoration(hintText: 'Status'),
             ),
             const SizedBox(
               height: 30,
@@ -65,10 +66,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ElevatedButton(
                 onPressed: () async {
                   if (id == null) {
-                    await _addItem();
+                    await _addItem2();
                   }
                   if (id != null) {
-                    await _updateItem(id);
+                    await _updateItem2(id);
                   }
                   _nameController.text = '';
                   if (!mounted) return;
@@ -81,32 +82,32 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  Future<void> _addItem() async {
-    await SQLHelper.createItem(JournalModel(
+  Future<void> _addItem2() async {
+    await SQLHelper.createItem2(StatusModel(
       name: _nameController.text,
     ));
 
-    _refreshJournals();
+    _refresh();
   }
 
-  Future<void> _updateItem(int id) async {
-    await SQLHelper.updateItem(JournalModel(
+  Future<void> _updateItem2(int id) async {
+    await SQLHelper.updateItem2(StatusModel(
       id: id,
       name: _nameController.text,
     ));
 
-    _refreshJournals();
+    _refresh();
   }
 
-  Future<void> _deleteItem(int id) async {
-    await SQLHelper.deleteItem(id);
+  Future<void> _deleteItem2(int id) async {
+    await SQLHelper.deleteItem2(id);
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Successfully deleterd a journal!'),
+      content: Text('Successfully deleterd a status!'),
     ));
 
-    _refreshJournals();
+    _refresh();
   }
 
   @override
@@ -115,7 +116,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         onWillPop: () async => false,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Category'),
+            title: const Text('Status'),
           ),
           // body: _widget,
           drawer: AppDrawer(
@@ -126,25 +127,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   child: CircularProgressIndicator(),
                 )
               : ListView.builder(
-                  itemCount: _journals.length,
+                  itemCount: _status.length,
                   itemBuilder: (context, index) => Card(
-                    color: Colors.orange[200],
+                    color: Colors.green[500],
                     margin: const EdgeInsets.all(15),
                     child: ListTile(
-                      title: Text(_journals[index]['name']),
-                      subtitle: Text(_journals[index]['createdAt']),
+                      title: Text(_status[index]['name']),
+                      subtitle: Text(_status[index]['createdAt']),
                       trailing: SizedBox(
                         width: 100,
                         child: Row(
                           children: [
                             IconButton(
-                              onPressed: () =>
-                                  _showForm(_journals[index]['id']),
+                              onPressed: () => _showForm(_status[index]['id']),
                               icon: const Icon(Icons.edit),
                             ),
                             IconButton(
                                 onPressed: () =>
-                                    _deleteItem(_journals[index]['id']),
+                                    _deleteItem2(_status[index]['id']),
                                 icon: const Icon(Icons.delete))
                           ],
                         ),
