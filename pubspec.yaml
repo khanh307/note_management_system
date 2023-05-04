@@ -37,6 +37,7 @@ dependencies:
   intl:
 
   crypto: ^3.0.2
+  d_chart: ^2.2.11
 
   time_machine:
 
