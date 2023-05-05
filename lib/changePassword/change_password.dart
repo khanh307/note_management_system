@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
+import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+import 'package:note_manangement_system/validator/validate_change.dart';
 
 class ChangePassword extends StatefulWidget {
   final UserModel user;
@@ -17,6 +19,7 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   UserModel user;
+
   _ChangePasswordState({required this.user});
 
   final _formChange = GlobalKey<FormState>();
@@ -25,8 +28,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   final _confirmPassword = TextEditingController();
 
   bool _obscureText = true;
-   bool _obscureTextConfirm = true;
-    bool _obscureTextNew = true;
+  bool _obscureTextConfirm = true;
+  bool _obscureTextNew = true;
 
   void _togglePassword() {
     setState(() {
@@ -39,7 +42,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       _obscureTextNew = !_obscureTextNew;
     });
   }
-
 
   void _toggleConFirmPassword() {
     setState(() {
@@ -101,8 +103,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập lại mật khẩu';
+                            return '* Please enter your password';
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(
@@ -133,30 +136,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureTextNew
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: _obscureTextNew ? Colors.grey : Colors.blue,
+                              color:
+                                  _obscureTextNew ? Colors.grey : Colors.blue,
                             ),
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập mật khẩu';
-                          }
-
-                          if (value.trim().length < 6 ||
-                              value.trim().length > 32) {
-                            return '* Mật khẩu phải có độ dài từ 6 đến 32 ký tự';
-                          }
-
-                          RegExp upperCase = RegExp(r'[A-Z]');
-                          if (!upperCase.hasMatch(value)) {
-                            return '* Vui lòng nhập ít nhât 1 chữ in hoa';
-                          }
-
-                          RegExp digit = RegExp(r'[0-9]');
-                          if (!digit.hasMatch(value)) {
-                            return '* Vui lòng nhập ít nhât 1 số';
-                          }
-                        },
+                        validator: ValidateChange.validatePassword,
                       ),
                       const SizedBox(
                         height: 20,
@@ -186,17 +171,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                               _obscureTextConfirm
                                   ? Icons.visibility_off
                                   : Icons.visibility,
-                              color: _obscureTextConfirm ? Colors.grey : Colors.blue,
+                              color: _obscureTextConfirm
+                                  ? Colors.grey
+                                  : Colors.blue,
                             ),
                           ),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập lại mật khẩu';
+                            return '* Please enter your password';
                           }
 
                           if (value != _newPassword.text) {
-                            return '*Mật khẩu chưa khớp';
+                            return '* Password does not match';
                           }
                           return null;
                         },
@@ -215,36 +202,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                         hashPassword(_currentPassword.text.trim())) {
                       await SQLHelper.changePassword(widget.user.email!,
                           hashPassword(_confirmPassword.text.trim()));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Thay đổi mật khẩu thành công',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18),
-                          ),
-                          duration: Duration(seconds: 3),
-                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-                        ),
-                      );
+                      showSnackBar(context, 'Change password successfully');
                     } else {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Thay đổi mật khẩu không thành công',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18),
-                          ),
-                          duration: Duration(seconds: 3),
-                          backgroundColor: Color.fromARGB(255, 113, 176, 224),
-                        ),
-                      );
+                      showSnackBar(context, 'Password change failed');
                     }
                   }
                 },

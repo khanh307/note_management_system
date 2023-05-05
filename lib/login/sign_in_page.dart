@@ -5,6 +5,7 @@ import 'package:note_manangement_system/homePage/home.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/register/sign_up_page.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+import 'package:note_manangement_system/validator/validator_sign_in.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -64,7 +65,7 @@ class _SignInHomeState extends State<SignInHome> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            '* Địa chỉ email hoặc mật khẩu không đúng',
+            '* Email address or password is incorrect',
             textAlign: TextAlign.center,
             style: TextStyle(
                 color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
@@ -144,16 +145,7 @@ class _SignInHomeState extends State<SignInHome> {
                               fillColor: Colors.grey[200],
                               filled: true,
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return '* Vui lòng nhập địa chỉ email';
-                              }
-
-                              if (!isValidEmail(value)) {
-                                return '* Địa chỉ email hoặc mật khẩu không đúng';
-                              }
-                              return null;
-                            },
+                            validator: ValidatorSignIn.valiEmailSignIn,
                           ),
                           SizedBox(
                             height: 20,
@@ -186,15 +178,7 @@ class _SignInHomeState extends State<SignInHome> {
                                 ),
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return '* Vui lòng nhập mật khẩu';
-                              }
-
-                              if (!isPasswordValid(value)) {
-                                return "Địa chỉ email hoặc mật khẩu không đúng";
-                              }
-                            },
+                            validator: ValidatorSignIn.valiPassword,
                           ),
                         ],
                       ),
