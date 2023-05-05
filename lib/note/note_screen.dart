@@ -78,7 +78,7 @@ class _NoteScreenState extends State<NoteScreen> {
   Future<void> _deleteNote(note) async {
     String name = note['name'];
     if (!_checkNoteDone(note)) {
-      showSnackBar(context, '* Không xoá được $name này vì chưa quá 6 tháng');
+      showSnackBar(context, '* You can\'t delete $name because it has not been more than 6 months ');
     } else {
       showDialog(
           context: context,
@@ -86,11 +86,11 @@ class _NoteScreenState extends State<NoteScreen> {
           builder: (_) => AlertDialog(
                 title: const Text('Delete'),
                 content:
-                    Text('* Bạn có chắc muốn xoá $name này không? Có/Không?'),
+                    Text('* Are you sure you want to delete $name? Yes/No?'),
                 actions: [
                   ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Không')),
+                      child: const Text('No')),
                   ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
@@ -99,7 +99,7 @@ class _NoteScreenState extends State<NoteScreen> {
                         showSnackBar(context, 'Successfully delete a note!');
                         _refreshData();
                       },
-                      child: const Text('Có')),
+                      child: const Text('Yes')),
                 ],
               ));
     }

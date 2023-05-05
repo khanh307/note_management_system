@@ -5,50 +5,50 @@ import 'package:time_machine/time_machine.dart';
 class NoteValidator {
   static Future<String?> nameValidate(String? value, int? id, int userId) async {
     if (value == null || value.isEmpty) {
-      return '* Vui lòng nhập tên';
+      return '* Please enter a name';
     }
 
     if (value.length < 5) {
-      return '* Vui lòng nhập tối thiểu 5 ký tự';
+      return '* Please enter a minimum of 5 characters';
     }
 
     bool isDuplicate = await SQLHelper.checkDuplicateNote(value, (id == null) ? - 1 : id, userId);
     if (!isDuplicate) {
-      return '* Vui lòng nhập tên khác, tên này đã tồn tại';
+      return '* Please enter a different name, this name already exists';
     }
     return null;
   }
 
   static String? categoryValidate(String? value) {
     if (value == null) {
-      return '* Vui chọn danh mục';
+      return '* Please select a category';
     }
     return null;
   }
 
   static String? priorityValidate(String? value) {
     if (value == null) {
-      return '* Vui chọn độ ưu tiên';
+      return '* Please select a priority';
     }
     return null;
   }
 
   static String? statusValidate(String? value) {
     if (value == null) {
-      return '* Vui chọn trạng thái';
+      return '* Please select a status';
     }
     return null;
   }
 
   static String? planDateValidate(String? value) {
     if (value == null || value.isEmpty) {
-      return '* Vui lòng chọn ngày hoàn thành';
+      return '* Please select a completion date';
     }
 
     if (DateFormat('dd/MM/yyy')
         .parse(value!)
         .isBefore(DateTime.now())) {
-      return '* Vui lòng chọn ngày hoàn thành bắt đầu từ ngày hiện tại';
+      return '* Please select a completion date starting from the current date';
     }
 
     return null;
