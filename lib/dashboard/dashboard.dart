@@ -42,11 +42,11 @@ class _DashBoardState extends State<DashBoard> {
                 }).toList(),
                 fillColor: (pieData, index) {
                   switch (pieData['domain']) {
-                    case 'Processing':
+                    case 'processing':
                       return Colors.grey[600];
-                    case 'Done':
+                    case 'done':
                       return Colors.blue[900];
-                    case 'Pending':
+                    case 'pending':
                       return Colors.red;
                     default:
                       return Colors.black;

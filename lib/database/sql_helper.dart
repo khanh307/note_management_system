@@ -151,11 +151,12 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> countStatus(int userid) async {
     final db = await SQLHelper.db();
     final count = db.rawQuery("""SELECT $_statusTable.$_columnName,
-          (Count($_columnStatusId)* 100 / (Select Count(*) From note)) as percent
+          (Count($_columnStatusId)* 100 / (Select Count(*) From note 
+          WHERE $_noteTable.$_columnUserId = $userid)) as percent
     FROM $_noteTable, $_statusTable
     WHERE  $_noteTable.$_columnUserId = $userid
     AND $_noteTable.$_columnStatusId = $_statusTable.$_columnId
-    GROUP BY $_columnStatusId""");
+    GROUP BY $_statusTable.$_columnName""");
     return count;
   }
 
