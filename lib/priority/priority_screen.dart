@@ -66,13 +66,18 @@ class _PriorityScreenState extends State<PriorityScreen> {
                   decoration: const InputDecoration(hintText: 'Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '* Vui lòng nhập tên';
+                      return '* Please enter name';
                     }
-                    if (value.length < 5) {
-                      return '* Vui lòng nhập tối thiểu 5 ký tự';
+                    if (value.length < 4) {
+                      return '* Please enter minimun 4 word';
+                    }
+                    if (value != 'High' &&
+                        value != 'Medium' &&
+                        value != 'Slow') {
+                      return '* Please enter High, Medium, Slow';
                     }
                     if (_isDuplicate) {
-                      return '* Vui lòng nhập tên khác, tên này đã tồn tại';
+                      return '* Please enter another name, this name was create';
                     }
                     return null;
                   },
@@ -137,26 +142,24 @@ class _PriorityScreenState extends State<PriorityScreen> {
 
     if (isAccept) {
       if (!mounted) return;
-      showSnackBar(
-          context, '* Không xoá được ${priority['name']} này vì đã có note');
+      showSnackBar(context,
+          "* Can't delete this ${priority['name']} because it already exists in note ");
     } else {
       final AlertDialog dialog = AlertDialog(
         title: const Text('Delete'),
-        content: Text(
-            '* Bạn có chắc muốn xoá ${priority['name']} này không? Có/Không?'),
+        content: Text('* You want to delete this ${priority['name']}? Yes/No?'),
         actions: [
           ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Không')),
+              onPressed: () => Navigator.pop(context), child: const Text('No')),
           ElevatedButton(
               onPressed: () async {
                 await SQLHelper.deletePriority(priority['id']);
                 if (!mounted) return;
-                showSnackBar(context, '${priority['name']} đã xoá thành công"');
+                showSnackBar(context, '${priority['name']} deleted');
                 _refreshJournals();
                 Navigator.pop(context);
               },
-              child: const Text('Có')),
+              child: const Text('Yes')),
         ],
       );
       showDialog(
