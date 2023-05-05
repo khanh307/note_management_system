@@ -1,20 +1,22 @@
-class PriorityModel {
+
+class Priority {
   final int? id;
   final String? name;
   final String? createdAt;
+  final int? userId;
 
-  PriorityModel({this.id, this.name, this.createdAt});
+  Priority({this.id, this.name, this.createdAt, this.userId});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
-      'createdAt': createdAt,
+      'userid': userId,
     };
   }
 
-  static PriorityModel fromMap(Map<String, dynamic> map) {
-    return PriorityModel(
+  static Priority fromMap(Map<String, dynamic> map) {
+    return Priority(
       id: map['id'],
       name: map['name'],
       createdAt: map['createdAt'],

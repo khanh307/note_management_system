@@ -1,20 +1,22 @@
-class StatusModel {
+
+class Status {
   final int? id;
   final String? name;
   final String? createdAt;
+  final int? userId;
 
-  StatusModel({this.id, this.name, this.createdAt});
+  Status({this.id, this.name, this.createdAt, this.userId});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
-      'createdAt': createdAt,
+      'userid': userId,
     };
   }
 
-  static StatusModel fromMap(Map<String, dynamic> map) {
-    return StatusModel(
+  static Status fromMap(Map<String, dynamic> map) {
+    return Status(
       id: map['id'],
       name: map['name'],
       createdAt: map['createdAt'],
