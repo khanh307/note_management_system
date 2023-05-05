@@ -69,13 +69,9 @@ class _StatusScreenState extends State<StatusScreen> {
                       return '* Please enter name';
                     }
                     if (value.length < 4) {
-                      return '* Please enter minimun 4 word';
+                      return '* Please enter minimum 4 word';
                     }
-                    if (value != 'Done' &&
-                        value != 'Pending' &&
-                        value != 'Progressing') {
-                      return '* Please enter Done, Progressing, Pending';
-                    }
+
                     if (_isDuplicate) {
                       return '* Please enter another name, this name was create';
                     }

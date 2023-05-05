@@ -69,12 +69,7 @@ class _PriorityScreenState extends State<PriorityScreen> {
                       return '* Please enter name';
                     }
                     if (value.length < 4) {
-                      return '* Please enter minimun 4 word';
-                    }
-                    if (value != 'High' &&
-                        value != 'Medium' &&
-                        value != 'Slow') {
-                      return '* Please enter High, Medium, Slow';
+                      return '* Please enter minimum 4 word';
                     }
                     if (_isDuplicate) {
                       return '* Please enter another name, this name was create';

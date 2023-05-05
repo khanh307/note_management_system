@@ -69,7 +69,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       return '* Please enter name';
                     }
                     if (value.length < 5) {
-                      return '* Please enter minimun 5 word';
+                      return '* Please enter minimum 5 word';
                     }
                     if (_isDuplicate) {
                       return '* Please enter another name, this name was create';
