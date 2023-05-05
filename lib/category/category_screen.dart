@@ -66,13 +66,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   decoration: const InputDecoration(hintText: 'Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '* Vui lòng nhập tên';
+                      return '* Please enter name';
                     }
                     if (value.length < 5) {
-                      return '* Vui lòng nhập tối thiểu 5 ký tự';
+                      return '* Please enter minimun 5 word';
                     }
                     if (_isDuplicate) {
-                      return '* Vui lòng nhập tên khác, tên này đã tồn tại';
+                      return '* Please enter another name, this name was create';
                     }
                     return null;
                   },
@@ -140,27 +140,31 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     if (isAccept) {
       if (!mounted) return;
-      showSnackBar(context, '* Không xoá được ${category['name']} này vì đã có note');
+      showSnackBar(context,
+          "* Can't delete this ${category['name']} because it already exists in note");
     } else {
       final AlertDialog dialog = AlertDialog(
         title: const Text('Delete'),
-        content: Text('* Bạn có chắc muốn xoá ${category['name']} này không? Có/Không?'),
+        content: Text('* You want to delete this ${category['name']}? Yes/No?'),
         actions: [
           ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Không')),
+              child: const Text('Yes')),
           ElevatedButton(
               onPressed: () async {
                 await SQLHelper.deleteCategory(category['id']);
                 if (!mounted) return;
-                showSnackBar(context, '${category['name']} đã xoá thành công');
+                showSnackBar(context, '${category['name']} deleted');
                 _refreshJournals();
                 Navigator.pop(context);
               },
-              child: const Text('Có')),
+              child: const Text('No')),
         ],
       );
-      showDialog(context: context, useRootNavigator: false, builder: (context) => dialog);
+      showDialog(
+          context: context,
+          useRootNavigator: false,
+          builder: (context) => dialog);
     }
   }
 
@@ -189,8 +193,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           icon: const Icon(Icons.edit),
                         ),
                         IconButton(
-                            onPressed: () =>
-                                _deleteItem(_categories[index]),
+                            onPressed: () => _deleteItem(_categories[index]),
                             icon: const Icon(Icons.delete))
                       ],
                     ),

@@ -66,18 +66,18 @@ class _StatusScreenState extends State<StatusScreen> {
                   decoration: const InputDecoration(hintText: 'Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '* Vui lòng nhập tên';
+                      return '* Please enter name';
                     }
                     if (value.length < 4) {
-                      return '* Vui lòng nhập tối thiểu  ký tự';
+                      return '* Please enter minimun 4 word';
                     }
                     if (value != 'Done' &&
                         value != 'Pending' &&
                         value != 'Progressing') {
-                      return '* Chỉ nhận Done, Progressing, Pending';
+                      return '* Please enter Done, Progressing, Pending';
                     }
                     if (_isDuplicate) {
-                      return '* Vui lòng nhập tên khác, tên này đã tồn tại';
+                      return '* Please enter another name, this name was create';
                     }
                     return null;
                   },
@@ -146,27 +146,26 @@ class _StatusScreenState extends State<StatusScreen> {
     if (isAccept) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('* Không xoá được ${status['name']} này vì đã có note'),
+        content: Text(
+            "* Can't delete this ${status['name']} because it already exists in note"),
       ));
     } else {
       final AlertDialog dialog = AlertDialog(
         title: const Text('Delete'),
-        content: Text(
-            '* Bạn có chắc muốn xoá ${status['name']} này không? Có/Không?'),
+        content: Text('* You want to delete this ${status['name']}? Yes/No?'),
         actions: [
           ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Không')),
+              onPressed: () => Navigator.pop(context), child: const Text('No')),
           ElevatedButton(
               onPressed: () async {
                 await SQLHelper.deleteStatus(status['id']);
                 if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('${status['name']} đã xoá thành công"')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${status['name']} deleted')));
                 _refreshJournals();
                 Navigator.pop(context);
               },
-              child: const Text('Có')),
+              child: const Text('Yes')),
         ],
       );
       showDialog(
