@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/snackbar/snack_bar.dart';
-import 'package:note_manangement_system/utils/function_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:note_manangement_system/validator/validator_edit.dart';
 
 class EditProfile extends StatefulWidget {
   final UserModel user;
@@ -59,9 +59,9 @@ class _EditProfileState extends State<EditProfile> {
 
     try {
       await SQLHelper.updateUser(widget.user.id!, firstname, lastname, email);
-      showSnackBar(context, 'Thay đổi thông tin thành công');
+      showSnackBar(context, 'Successfully changed information');
     } catch (error) {
-      showSnackBar(context, 'Thay đổi thông tin thất bại');
+      showSnackBar(context, 'Change information failed');
     }
   }
 
@@ -108,22 +108,7 @@ class _EditProfileState extends State<EditProfile> {
                                 fillColor: Colors.white10,
                                 filled: true,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "* Vui lòng nhập họ và tên lót";
-                                }
-
-                                if (value.trim().length < 2 ||
-                                    value.trim().length > 32) {
-                                  return "* Họ và tên lót phải có độ dài từ 2 đến 32 ký tự";
-                                }
-
-                                if (value.endsWith(' ')) {
-                                  return "* Vui lòng không kết thúc bằng dấu cách";
-                                }
-
-                                return null;
-                              },
+                              validator: ValidatorEdit.validateFirstname,
                             ),
                             const SizedBox(
                               height: 20,
@@ -149,20 +134,7 @@ class _EditProfileState extends State<EditProfile> {
                                 fillColor: Colors.white10,
                                 filled: true,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "* Vui lòng nhập tên";
-                                }
-
-                                if (value.length < 2 || value.length > 32) {
-                                  return "* Tên phải có độ dài từ 2 đến 32 ký tự";
-                                }
-
-                                if (value.endsWith(' ')) {
-                                  return "* Vui lòng không kết thúc bằng dấu cách";
-                                }
-                                return null;
-                              },
+                              validator: ValidatorEdit.validateLastname,
                             ),
                             const SizedBox(
                               height: 20,
@@ -184,16 +156,7 @@ class _EditProfileState extends State<EditProfile> {
                                 fillColor: Colors.white10,
                                 filled: true,
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return '* Vui lòng nhập địa chỉ email';
-                                }
-
-                                if (!isValidEmail(value)) {
-                                  return '* Địa chỉ email hoặc mật khẩu không đúng';
-                                }
-                                return null;
-                              },
+                              validator: ValidatorEdit.validateEmailEdit,
                             )
                           ],
                         )),

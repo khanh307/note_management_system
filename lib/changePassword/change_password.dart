@@ -6,6 +6,7 @@ import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+import 'package:note_manangement_system/validator/validate_change.dart';
 
 class ChangePassword extends StatefulWidget {
   final UserModel user;
@@ -102,7 +103,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập lại mật khẩu';
+                            return '* Please enter your password';
                           }
                           return null;
                         },
@@ -140,28 +141,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             ),
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập mật khẩu';
-                          }
-
-                          if (value.trim().length < 6 ||
-                              value.trim().length > 32) {
-                            return '* Mật khẩu phải có độ dài từ 6 đến 32 ký tự';
-                          }
-
-                          RegExp upperCase = RegExp(r'[A-Z]');
-                          if (!upperCase.hasMatch(value)) {
-                            return '* Vui lòng nhập ít nhât 1 chữ in hoa';
-                          }
-
-                          RegExp digit = RegExp(r'[0-9]');
-                          if (!digit.hasMatch(value)) {
-                            return '* Vui lòng nhập ít nhât 1 số';
-                          }
-
-                          return null;
-                        },
+                        validator: ValidateChange.validatePassword,
                       ),
                       const SizedBox(
                         height: 20,
@@ -199,11 +179,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '* Vui lòng nhập lại mật khẩu';
+                            return '* Please enter your password';
                           }
 
                           if (value != _newPassword.text) {
-                            return '*Mật khẩu chưa khớp';
+                            return '* Password does not match';
                           }
                           return null;
                         },
@@ -222,10 +202,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                         hashPassword(_currentPassword.text.trim())) {
                       await SQLHelper.changePassword(widget.user.email!,
                           hashPassword(_confirmPassword.text.trim()));
-                      showSnackBar(context, 'Thay đổi mật khẩu thành công');
+                      showSnackBar(context, 'Change password successfully');
                     } else {
                       if (!mounted) return;
-                      showSnackBar(context, 'Thay đổi mật khẩu không thành công');
+                      showSnackBar(context, 'Password change failed');
                     }
                   }
                 },

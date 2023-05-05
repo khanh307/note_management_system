@@ -4,8 +4,8 @@ import 'package:note_manangement_system/database/sql_helper.dart';
 import 'package:note_manangement_system/homePage/home.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 import 'package:note_manangement_system/register/sign_up_page.dart';
-import 'package:note_manangement_system/snackbar/snack_bar.dart';
 import 'package:note_manangement_system/utils/function_utils.dart';
+import 'package:note_manangement_system/validator/validator_sign_in.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -62,7 +62,18 @@ class _SignInHomeState extends State<SignInHome> {
                   HomeScreen(user: UserModel.fromMap(user[0]))),
           (route) => false);
     } else {
-      showSnackBar(context, '* Địa chỉ email hoặc mật khẩu không đúng');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            '* Email address or password is incorrect',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.red, fontWeight: FontWeight.w400, fontSize: 18),
+          ),
+          duration: Duration(seconds: 3),
+          backgroundColor: Color.fromARGB(255, 113, 176, 224),
+        ),
+      );
     }
   }
 
@@ -134,16 +145,7 @@ class _SignInHomeState extends State<SignInHome> {
                               fillColor: Colors.grey[200],
                               filled: true,
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-
-                              if (!isValidEmail(value)) {
-                                return 'Incorrect email format';
-                              }
-                              return null;
-                            },
+                            validator: ValidatorSignIn.valiEmailSignIn,
                           ),
                           SizedBox(
                             height: 20,
@@ -176,11 +178,7 @@ class _SignInHomeState extends State<SignInHome> {
                                 ),
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                            },
+                            validator: ValidatorSignIn.valiPassword,
                           ),
                         ],
                       ),
@@ -191,7 +189,9 @@ class _SignInHomeState extends State<SignInHome> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      _login();
+                      if (_formKey.currentState!.validate()) {
+                        _login();
+                      }
                     },
                     child: Text(
                       'Login',
@@ -237,4 +237,3 @@ class _SignInHomeState extends State<SignInHome> {
     );
   }
 }
-
