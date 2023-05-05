@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:note_manangement_system/database/sql_helper.dart';
-import 'package:note_manangement_system/model/priority_model.dart';
 import 'package:note_manangement_system/model/status_model.dart';
 import 'package:note_manangement_system/model/user_model.dart';
 
@@ -26,6 +25,14 @@ class _StatusScreenState extends State<StatusScreen> {
     setState(() {
       _status = data;
       _isLoading = false;
+    });
+  }
+
+  Future<void> isDuplicate(id) async {
+    bool isDuplicate = await SQLHelper.checkDuplicateStatus(
+        _nameController.text, (id == null) ? -1 : id, widget.user.id!);
+    setState(() {
+      _isDuplicate = isDuplicate;
     });
   }
 
@@ -77,12 +84,9 @@ class _StatusScreenState extends State<StatusScreen> {
                     }
                     return null;
                   },
-                  onChanged: (value) async {
-                    setState(() async {
-                      _isDuplicate = await SQLHelper.checkDuplicateStatus(
-                          _nameController.text,
-                          (id == null) ? -1 : id,
-                          widget.user.id!);
+                  onChanged: (value) {
+                    setState(() {
+                      isDuplicate(id);
                     });
                   },
                 ),

@@ -35,6 +35,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     _refreshJournals();
   }
 
+  Future<void> isDuplicate(id) async {
+    bool isDuplicate = await SQLHelper.checkDuplicateCategory(
+        _nameController.text, (id == null) ? -1: id , widget.user.id!);
+    setState(() {
+      _isDuplicate = isDuplicate;
+    });
+  }
+
   void _showForm(int? id) async {
     if (id != null) {
       final existingJournal =
@@ -48,7 +56,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       context: context,
       elevation: 5,
       isScrollControlled: true,
-      builder: (_) => StatefulBuilder(builder: (context, setState) {
+      builder: (context) => StatefulBuilder(builder: (context, setState) {
         return Container(
           padding: EdgeInsets.only(
               top: 15,
@@ -76,15 +84,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     }
                     return null;
                   },
-                  onChanged: (value) async {
-                    setState(() async {
-                      if (id == null) {
-                        _isDuplicate = await SQLHelper.checkDuplicateCategory(
-                            _nameController.text, -1, widget.user.id!);
-                      } else {
-                        _isDuplicate = await SQLHelper.checkDuplicateCategory(
-                            _nameController.text, id, widget.user.id!);
-                      }
+                  onChanged: (value) {
+                    setState(() {
+                      isDuplicate(id);
                     });
                   },
                 ),
@@ -149,7 +151,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         actions: [
           ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Yes')),
+              child: const Text('No')),
           ElevatedButton(
               onPressed: () async {
                 await SQLHelper.deleteCategory(category['id']);
@@ -158,7 +160,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 _refreshJournals();
                 Navigator.pop(context);
               },
-              child: const Text('No')),
+              child: const Text('Yes')),
         ],
       );
       showDialog(

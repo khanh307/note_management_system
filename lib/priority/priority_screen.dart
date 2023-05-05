@@ -29,6 +29,14 @@ class _PriorityScreenState extends State<PriorityScreen> {
     });
   }
 
+  Future<void> isDuplicate(id) async {
+    bool isDuplicate = await SQLHelper.checkDuplicatePriority(
+        _nameController.text, (id == null) ? -1 : id, widget.user.id!);
+    setState(() {
+      _isDuplicate = isDuplicate;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,12 +84,9 @@ class _PriorityScreenState extends State<PriorityScreen> {
                     }
                     return null;
                   },
-                  onChanged: (value) async {
-                    setState(() async {
-                      _isDuplicate = await SQLHelper.checkDuplicatePriority(
-                          _nameController.text,
-                          (id == null) ? -1 : id,
-                          widget.user.id!);
+                  onChanged: (value) {
+                    setState(() {
+                      isDuplicate(id);
                     });
                   },
                 ),
