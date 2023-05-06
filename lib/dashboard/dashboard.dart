@@ -41,7 +41,7 @@ class _DashBoardState extends State<DashBoard> {
                   return {'domain': e['name'], 'measure': e['percent']};
                 }).toList(),
                 fillColor: (pieData, index) {
-                  switch (pieData['domain']) {
+                  switch (pieData['domain'].toString().toLowerCase()) {
                     case 'processing':
                       return Colors.grey[600];
                     case 'done':
